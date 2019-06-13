@@ -6,7 +6,7 @@ import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/routers/routes.dart';
 import 'package:provide/provide.dart';
 
-import 'config/colors.dart';
+import 'constants/colors.dart';
 
 void main() {
   var loginProvide = LoginProvide();

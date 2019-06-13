@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rhine/config/assets.dart';
-import 'package:flutter_rhine/config/colors.dart';
+import 'package:flutter_rhine/constants/assets.dart';
+import 'package:flutter_rhine/constants/colors.dart';
 
 class LoginPage extends StatelessWidget {
   @override

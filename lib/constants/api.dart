@@ -1,0 +1,5 @@
+const serviceUrl = '';
+
+const servicePath = {
+
+};
