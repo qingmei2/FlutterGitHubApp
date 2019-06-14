@@ -20,13 +20,15 @@ class LoginPage extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: Padding(
           padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
-          child: Column(
-            children: <Widget>[
-              _loginTitle(),
-              _usernameInput(),
-              _passwordInput(),
-              _signInButton()
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _loginTitle(),
+                _usernameInput(),
+                _passwordInput(),
+                _signInButton()
+              ],
+            ),
           ),
         ),
       ),
