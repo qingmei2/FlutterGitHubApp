@@ -138,11 +138,12 @@ class LoginPage extends StatelessWidget {
 
     final Future result = provide.login();
     result.then((res) {
-      Navigator.pop(context);
       if (res != null && res.result) {
         Future.delayed(const Duration(seconds: 1), () {
           Application.router.navigateTo(context, MainPage.path);
+          return true;
         });
+        Navigator.pop(context);
       }
     });
   }

@@ -14,7 +14,10 @@ void main() {
 
   providers..provide(Provider<LoginProvide>.value(loginProvide));
 
-  runApp(MyApp());
+  runApp(ProviderNode(
+    child: MyApp(),
+    providers: providers,
+  ));
 }
 
 class MyApp extends StatelessWidget {

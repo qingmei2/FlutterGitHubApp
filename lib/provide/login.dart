@@ -41,7 +41,7 @@ class LoginProvide with ChangeNotifier {
     await SpUtils.save(Config.USER_BASIC_CODE, base64Str);
 
     final Map requestParams = {
-      "scopes": ['user', 'repo', 'gist', 'notifications'],
+      "scopes": ['user', 'repo'],
       "note": "admin_script",
       "client_id": Ignore.clientId,
       "client_secret": Ignore.clientSecret
@@ -50,10 +50,10 @@ class LoginProvide with ChangeNotifier {
 
     var res = await serviceManager.netFetch(Api.authorization,
         json.encode(requestParams), null, new Options(method: "post"));
-    var resultData = null;
+    var resultData;
     if (res != null && res.result) {
       await SpUtils.save(Config.PW_KEY, password);
-      var resultData = await getUserInfo(null);
+      resultData = await getUserInfo(null);
 
       if (Config.DEBUG) {
         print("user result " + resultData.result.toString());

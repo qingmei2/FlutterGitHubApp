@@ -11,7 +11,7 @@ class SpUtils {
 
   static get(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.get(key);
+    return prefs.get(key);
   }
 
   static remove(String key) async {
