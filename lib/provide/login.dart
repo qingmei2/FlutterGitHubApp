@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rhine/constants/api.dart';
 import 'package:flutter_rhine/constants/config.dart';
 import 'package:flutter_rhine/constants/ignore.dart';
+import 'package:flutter_rhine/dao/dao_result.dart';
+import 'package:flutter_rhine/model/user.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
 import 'package:flutter_rhine/service/service_manager.dart';
 
@@ -12,15 +14,22 @@ class LoginProvide with ChangeNotifier {
   String username;
   String password;
 
+  void onUserNameChanged(final String newValue) {
+    if (username != newValue) {
+      username = newValue;
+      notifyListeners();
+    }
+  }
+
+  void onPasswordChanged(final String newValue) {
+    if (password != newValue) {
+      password = newValue;
+      notifyListeners();
+    }
+  }
+
   /// 用户登录
   login() async {
-    if (username == null || username.length == 0) {
-      return;
-    }
-    if (password == null || password.length == 0) {
-      return;
-    }
-
     final String type = username + ":" + password;
     var bytes = utf8.encode(type);
     var base64Str = base64.encode(bytes);
@@ -44,15 +53,31 @@ class LoginProvide with ChangeNotifier {
     var resultData = null;
     if (res != null && res.result) {
       await SpUtils.save(Config.PW_KEY, password);
+      var resultData = await getUserInfo(null);
+
+      if (Config.DEBUG) {
+        print("user result " + resultData.result.toString());
+        print(resultData.data);
+        print(res.data.toString());
+      }
     }
+    return new DataResult(resultData, res.result);
   }
 
   /// 获取用户登录信息
   getUserInfo(final String userName, {bool needDb = false}) async {
-    var res = await serviceManager.netFetch(Api.userInfo, null, null, null);
-    if (res != null && res.result) {
-
+    next() async {
+      var res = await serviceManager.netFetch(Api.userInfo, null, null, null);
+      if (res != null && res.result) {
+        final User user = User.fromJson(res.data);
+        SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
+        return DataResult(user, true);
+      } else {
+        return DataResult(res.data, false);
+      }
     }
+
+    return await next();
   }
 }
 

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
+import 'package:flutter_rhine/pages/home/main_page.dart';
+import 'package:flutter_rhine/provide/login.dart';
+import 'package:flutter_rhine/routers/application.dart';
+import 'package:provide/provide.dart';
 
 class LoginPage extends StatelessWidget {
+  static final String path = 'login_page';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +30,9 @@ class LoginPage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 _loginTitle(),
-                _usernameInput(),
-                _passwordInput(),
-                _signInButton()
+                _usernameInput(context),
+                _passwordInput(context),
+                _signInButton(context)
               ],
             ),
           ),
@@ -61,10 +67,12 @@ class LoginPage extends StatelessWidget {
       );
 
   /// 用户名输入框
-  Widget _usernameInput() => Container(
+  Widget _usernameInput(BuildContext context) => Container(
         margin: EdgeInsets.only(top: 24.0),
         child: TextField(
           keyboardType: TextInputType.text,
+          onChanged: (String newValue) =>
+              Provide.value<LoginProvide>(context).onUserNameChanged(newValue),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             labelText: 'Username or email address',
@@ -73,10 +81,12 @@ class LoginPage extends StatelessWidget {
       );
 
   /// 密码输入框
-  Widget _passwordInput() => Container(
+  Widget _passwordInput(BuildContext context) => Container(
         margin: EdgeInsets.only(top: 8.0),
         child: TextField(
           keyboardType: TextInputType.text,
+          onChanged: (String newValue) =>
+              Provide.value<LoginProvide>(context).onPasswordChanged(newValue),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             labelText: 'Password',
@@ -85,7 +95,7 @@ class LoginPage extends StatelessWidget {
       );
 
   /// 登录按钮
-  Widget _signInButton() => Container(
+  Widget _signInButton(BuildContext context) => Container(
         alignment: Alignment.center,
         margin: EdgeInsets.only(top: 32.0),
         width: double.infinity,
@@ -95,9 +105,7 @@ class LoginPage extends StatelessWidget {
             minHeight: 50.0,
           ),
           child: FlatButton(
-            onPressed: () {
-
-            },
+            onPressed: () => _onLoginButtonClicked(context),
             color: colorSecondaryDark,
             highlightColor: colorPrimary,
             shape: RoundedRectangleBorder(
@@ -114,4 +122,28 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       );
+
+  /// 登录按钮点击事件
+  void _onLoginButtonClicked(BuildContext context) {
+    final LoginProvide provide = Provide.value<LoginProvide>(context);
+    final String username = provide.username;
+    final String password = provide.password;
+
+    if (username == null || username.length == 0) {
+      return;
+    }
+    if (password == null || password.length == 0) {
+      return;
+    }
+
+    final Future result = provide.login();
+    result.then((res) {
+      Navigator.pop(context);
+      if (res != null && res.result) {
+        Future.delayed(const Duration(seconds: 1), () {
+          Application.router.navigateTo(context, MainPage.path);
+        });
+      }
+    });
+  }
 }
