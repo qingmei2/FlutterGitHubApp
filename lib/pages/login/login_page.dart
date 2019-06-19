@@ -95,7 +95,9 @@ class LoginPage extends StatelessWidget {
             minHeight: 50.0,
           ),
           child: FlatButton(
-            onPressed: () {},
+            onPressed: () {
+
+            },
             color: colorSecondaryDark,
             highlightColor: colorPrimary,
             shape: RoundedRectangleBorder(
