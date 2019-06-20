@@ -36,8 +36,28 @@ class LoginProvide with ChangeNotifier {
     }
   }
 
+  /// 用户自动登录
+  Future<DataResult> autoLogin() async {
+    final String usernameTemp = await SpUtils.get(Config.USER_NAME_KEY) ?? '';
+    final String passwordTemp = await SpUtils.get(Config.PW_KEY) ?? '';
+
+    if (usernameTemp == '' || passwordTemp == '') {
+      return DataResult(null, false);
+    }
+
+    username = usernameTemp;
+    password = passwordTemp;
+    notifyListeners();
+
+    return login();
+  }
+
   /// 用户登录
-  login() async {
+  Future<DataResult> login() async {
+    if (progressVisible) {
+      return new DataResult(null, false);
+    }
+
     final String type = username + ":" + password;
     var bytes = utf8.encode(type);
     var base64Str = base64.encode(bytes);

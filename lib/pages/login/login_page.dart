@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
+import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/pages/main/main_page.dart';
 import 'package:flutter_rhine/provide/login/login_provide.dart';
 import 'package:flutter_rhine/routers/application.dart';
@@ -12,6 +13,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 先尝试自动登录
+    _tryAutoLogin(context);
     return Provide<LoginProvide>(builder: (context, child, val) {
       final LoginProvide provide = Provide.value<LoginProvide>(context);
       return Scaffold(
@@ -83,6 +86,8 @@ class LoginPage extends StatelessWidget {
   Widget _usernameInput(BuildContext context) => Container(
         margin: EdgeInsets.only(top: 24.0),
         child: TextField(
+          controller: TextEditingController(
+              text: Provide.value<LoginProvide>(context).username),
           keyboardType: TextInputType.text,
           onChanged: (String newValue) =>
               Provide.value<LoginProvide>(context).onUserNameChanged(newValue),
@@ -97,8 +102,11 @@ class LoginPage extends StatelessWidget {
   Widget _passwordInput(BuildContext context) => Container(
         margin: EdgeInsets.only(top: 8.0),
         child: TextField(
+          controller: TextEditingController(
+              text: Provide.value<LoginProvide>(context).password),
           keyboardType: TextInputType.text,
-          obscureText: true,    // 输入密码模式
+          obscureText: true,
+          // 输入密码模式
           onChanged: (String newValue) =>
               Provide.value<LoginProvide>(context).onPasswordChanged(newValue),
           decoration: InputDecoration(
@@ -137,6 +145,12 @@ class LoginPage extends StatelessWidget {
         ),
       );
 
+  /// 尝试自动登录
+  void _tryAutoLogin(BuildContext context) {
+    final LoginProvide provide = Provide.value<LoginProvide>(context);
+    provide.autoLogin().then((res) => _onLoginSuccess(context, res));
+  }
+
   /// 登录按钮点击事件
   void _onLoginButtonClicked(BuildContext context) {
     final LoginProvide provide = Provide.value<LoginProvide>(context);
@@ -151,14 +165,19 @@ class LoginPage extends StatelessWidget {
     }
 
     final Future result = provide.login();
-    result.then((res) {
-      if (res != null && res.result) {
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.pop(context);
-          Application.router.navigateTo(context, MainPage.path);
-          return true;
-        });
-      }
-    });
+    result.then((res) => _onLoginSuccess(context, res));
+  }
+
+  /// 登录结果处理
+  void _onLoginSuccess(BuildContext context, DataResult res) {
+    if (res != null && res.result) {
+      // 登录成功，跳转主页面
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.pop(context);
+        Application.router.navigateTo(context, MainPage.path);
+        return true;
+      });
+    }
+    // 登录失败
   }
 }
