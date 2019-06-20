@@ -36,6 +36,11 @@ class LoginProvide with ChangeNotifier {
     }
   }
 
+  void updateTextField(
+      final String newValue, final TextEditingController controller) {
+    controller.text = newValue;
+  }
+
   /// 用户自动登录
   Future<DataResult> autoLogin() async {
     final String usernameTemp = await SpUtils.get(Config.USER_NAME_KEY) ?? '';
@@ -54,7 +59,7 @@ class LoginProvide with ChangeNotifier {
 
   /// 用户登录
   Future<DataResult> login() async {
-    if (progressVisible) {
+    if (progressVisible == true) {
       return new DataResult(null, false);
     }
 

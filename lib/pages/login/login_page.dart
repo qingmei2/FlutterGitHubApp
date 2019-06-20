@@ -11,9 +11,13 @@ import 'package:provide/provide.dart';
 class LoginPage extends StatelessWidget {
   static final String path = 'login_page';
 
+  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // 先尝试自动登录
+    print('LoginPage#build');
     _tryAutoLogin(context);
     return Provide<LoginProvide>(builder: (context, child, val) {
       final LoginProvide provide = Provide.value<LoginProvide>(context);
@@ -86,8 +90,7 @@ class LoginPage extends StatelessWidget {
   Widget _usernameInput(BuildContext context) => Container(
         margin: EdgeInsets.only(top: 24.0),
         child: TextField(
-          controller: TextEditingController(
-              text: Provide.value<LoginProvide>(context).username),
+          controller: userNameController,
           keyboardType: TextInputType.text,
           onChanged: (String newValue) =>
               Provide.value<LoginProvide>(context).onUserNameChanged(newValue),
@@ -102,8 +105,7 @@ class LoginPage extends StatelessWidget {
   Widget _passwordInput(BuildContext context) => Container(
         margin: EdgeInsets.only(top: 8.0),
         child: TextField(
-          controller: TextEditingController(
-              text: Provide.value<LoginProvide>(context).password),
+          controller: passwordController,
           keyboardType: TextInputType.text,
           obscureText: true,
           // 输入密码模式
@@ -170,7 +172,11 @@ class LoginPage extends StatelessWidget {
 
   /// 登录结果处理
   void _onLoginSuccess(BuildContext context, DataResult res) {
+    final LoginProvide provide = Provide.value<LoginProvide>(context);
     if (res != null && res.result) {
+      // 清除登录信息
+      provide.updateTextField("", userNameController);
+      provide.updateTextField("", passwordController);
       // 登录成功，跳转主页面
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pop(context);
