@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MainPageProvider extends ChangeNotifier {
+class MainPageModel with ChangeNotifier {
   static const int TAB_INDEX_EVENTS = 0;
   static const int TAB_INDEX_REPOS = 1;
   static const int TAB_INDEX_PROFILE = 2;

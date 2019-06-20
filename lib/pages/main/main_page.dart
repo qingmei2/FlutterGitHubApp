@@ -3,8 +3,8 @@ import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/pages/main/main_profile_page.dart';
 import 'package:flutter_rhine/pages/main/main_repo_page.dart';
-import 'package:flutter_rhine/provider/main/main_provider.dart';
-import 'package:provide/provide.dart';
+import 'package:flutter_rhine/providers/main/main_model.dart';
+import 'package:provider/provider.dart';
 
 import 'main_events_page.dart';
 
@@ -36,29 +36,26 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provide<MainPageProvider>(builder: (context, child, val) {
-      final MainPageProvider provide = Provide.value<MainPageProvider>(context);
-      return Scaffold(
-        body: _pagedList[provide.currentPageIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: colorPrimary,
-          items: <BottomNavigationBarItem>[
-            _bottomNavigationBarItem(provide, MainPageProvider.TAB_INDEX_EVENTS),
-            _bottomNavigationBarItem(provide, MainPageProvider.TAB_INDEX_REPOS),
-            _bottomNavigationBarItem(
-                provide, MainPageProvider.TAB_INDEX_PROFILE),
-          ],
-          currentIndex: provide.currentPageIndex,
-          iconSize: 24.0,
-          type: BottomNavigationBarType.fixed,
-          onTap: (newIndex) => provide.onTabPageChanged(newIndex),
-        ),
-      );
-    });
+    final MainPageModel _pageModel = Provider.of<MainPageModel>(context);
+    return Scaffold(
+      body: _pagedList[_pageModel.currentPageIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: colorPrimary,
+        items: <BottomNavigationBarItem>[
+          _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_EVENTS),
+          _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_REPOS),
+          _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_PROFILE),
+        ],
+        currentIndex: _pageModel.currentPageIndex,
+        iconSize: 24.0,
+        type: BottomNavigationBarType.fixed,
+        onTap: (newIndex) => _pageModel.onTabPageChanged(newIndex),
+      ),
+    );
   }
 
   BottomNavigationBarItem _bottomNavigationBarItem(
-          MainPageProvider provide, int tabIndex) =>
+          MainPageModel provide, int tabIndex) =>
       BottomNavigationBarItem(
         icon: _getTabIcon(provide.currentPageIndex, tabIndex),
         title: _getTabTitle(provide.currentPageIndex, tabIndex),

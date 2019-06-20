@@ -3,10 +3,10 @@ import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/pages/main/main_page.dart';
-import 'package:flutter_rhine/provider/login/login_provider.dart';
+import 'package:flutter_rhine/providers/login/login_model.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/widget/global_progress_bar.dart';
-import 'package:provide/provide.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   static final String path = 'login_page';
@@ -16,48 +16,46 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
     // 先尝试自动登录
     _tryAutoLogin(context);
-    return Provide<LoginProvider>(builder: (context, child, val) {
-      final LoginProvider provide = Provide.value<LoginProvider>(context);
-      return Scaffold(
-        appBar: AppBar(
-          title: Container(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text(
-              'Sign in',
-              textAlign: TextAlign.start,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Container(
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.only(left: 16.0),
+          child: Text(
+            'Sign in',
+            textAlign: TextAlign.start,
           ),
         ),
-        body: Container(
-          alignment: Alignment.topCenter,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
-            child: Stack(
-              alignment: Alignment.center,
-              fit: StackFit.loose,
-              children: <Widget>[
-                SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      _loginTitle(),
-                      _usernameInput(context),
-                      _passwordInput(context),
-                      _signInButton(context)
-                    ],
-                  ),
+      ),
+      body: Container(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
+          child: Stack(
+            alignment: Alignment.center,
+            fit: StackFit.loose,
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    _loginTitle(),
+                    _usernameInput(context),
+                    _passwordInput(context),
+                    _signInButton(context)
+                  ],
                 ),
-                ProgressBar(
-                  visibility: provide.progressVisible ?? false,
-                ),
-              ],
-            ),
+              ),
+              ProgressBar(
+                visibility: _loginModel.progressVisible ?? false,
+              ),
+            ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   /// 顶部图标和标题
@@ -86,78 +84,88 @@ class LoginPage extends StatelessWidget {
       );
 
   /// 用户名输入框
-  Widget _usernameInput(BuildContext context) => Container(
-        margin: EdgeInsets.only(top: 24.0),
-        child: TextField(
-          controller: userNameController,
-          keyboardType: TextInputType.text,
-          onChanged: (String newValue) =>
-              Provide.value<LoginProvider>(context).onUserNameChanged(newValue),
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-            labelText: 'Username or email address',
+  Widget _usernameInput(BuildContext context) {
+    return Consumer<LoginPageModel>(
+      builder: (context, LoginPageModel model, child) => Container(
+            margin: EdgeInsets.only(top: 24.0),
+            child: TextField(
+              controller: userNameController,
+              keyboardType: TextInputType.text,
+              onChanged: (String newValue) => model.onUserNameChanged(newValue),
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                labelText: 'Username or email address',
+              ),
+            ),
           ),
-        ),
-      );
+    );
+  }
 
   /// 密码输入框
-  Widget _passwordInput(BuildContext context) => Container(
+  Widget _passwordInput(BuildContext context) {
+    return Consumer<LoginPageModel>(
+        builder: (context, LoginPageModel model, child) {
+      return Container(
         margin: EdgeInsets.only(top: 8.0),
         child: TextField(
           controller: passwordController,
           keyboardType: TextInputType.text,
           obscureText: true,
           // 输入密码模式
-          onChanged: (String newValue) =>
-              Provide.value<LoginProvider>(context).onPasswordChanged(newValue),
+          onChanged: (String newValue) => model.onPasswordChanged(newValue),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             labelText: 'Password',
           ),
         ),
       );
+    });
+  }
 
   /// 登录按钮
-  Widget _signInButton(BuildContext context) => Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.only(top: 32.0),
-        width: double.infinity,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: double.infinity,
-            minHeight: 50.0,
+  Widget _signInButton(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.only(top: 32.0),
+      width: double.infinity,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: double.infinity,
+          minHeight: 50.0,
+        ),
+        child: FlatButton(
+          onPressed: () => _onLoginButtonClicked(context),
+          color: colorSecondaryDark,
+          highlightColor: colorPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(7.0)),
           ),
-          child: FlatButton(
-            onPressed: () => _onLoginButtonClicked(context),
-            color: colorSecondaryDark,
-            highlightColor: colorPrimary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(7.0)),
-            ),
-            child: Text(
-              'Sign in',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
+          child: Text(
+            'Sign in',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 
   /// 尝试自动登录
   void _tryAutoLogin(BuildContext context) {
-    Provide.value<LoginProvider>(context)
+    Provider.of<LoginPageModel>(context)
         .tryAutoLogin(userNameController, passwordController)
         .then((res) => _onLoginSuccess(context, res));
   }
 
   /// 登录按钮点击事件
   void _onLoginButtonClicked(BuildContext context) {
-    final LoginProvider provide = Provide.value<LoginProvider>(context);
-    final String username = provide.username;
-    final String password = provide.password;
+    final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
+
+    final String username = _loginModel.username;
+    final String password = _loginModel.password;
 
     if (username == null || username.length == 0) {
       return;
@@ -166,17 +174,18 @@ class LoginPage extends StatelessWidget {
       return;
     }
 
-    final Future result = provide.login();
+    final Future result = _loginModel.login();
     result.then((res) => _onLoginSuccess(context, res));
   }
 
   /// 登录结果处理
   void _onLoginSuccess(BuildContext context, DataResult res) {
-    final LoginProvider provide = Provide.value<LoginProvider>(context);
+    final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
+
     if (res != null && res.result) {
       // 清除登录信息
-      provide.updateTextField("", userNameController);
-      provide.updateTextField("", passwordController);
+      _loginModel.updateTextField("", userNameController);
+      _loginModel.updateTextField("", passwordController);
       // 登录成功，跳转主页面
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pop(context);

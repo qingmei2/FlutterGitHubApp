@@ -10,7 +10,7 @@ import 'package:flutter_rhine/model/user.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
 import 'package:flutter_rhine/service/service_manager.dart';
 
-class LoginProvider with ChangeNotifier {
+class LoginPageModel with ChangeNotifier {
   bool _progressVisible;
   bool _tryAutoLogin = true;
   String _username;

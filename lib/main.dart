@@ -1,25 +1,24 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/pages/login/login_page.dart';
-import 'package:flutter_rhine/provider/login/login_provider.dart';
-import 'package:flutter_rhine/provider/main/main_provider.dart';
+import 'package:flutter_rhine/providers/login/login_model.dart';
+import 'package:flutter_rhine/providers/main/main_model.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/routers/routes.dart';
-import 'package:provide/provide.dart';
+import 'package:provider/provider.dart';
 
 import 'constants/colors.dart';
 
 void main() {
-  var loginProvide = LoginProvider();
-  var mainProvide = MainPageProvider();
-  var providers = Providers();
+  var loginPageModel = LoginPageModel();
+  var mainPageModel = MainPageModel();
 
-  providers..provide(Provider<LoginProvider>.value(loginProvide));
-  providers..provide(Provider<MainPageProvider>.value(mainProvide));
-
-  runApp(ProviderNode(
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider.value(value: loginPageModel),
+      ChangeNotifierProvider.value(value: mainPageModel),
+    ],
     child: MyApp(),
-    providers: providers,
   ));
 }
 
