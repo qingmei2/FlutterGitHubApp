@@ -1,8 +1,8 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/pages/login/login_page.dart';
-import 'package:flutter_rhine/provide/login/login_provide.dart';
-import 'package:flutter_rhine/provide/main/main_provide.dart';
+import 'package:flutter_rhine/provider/login/login_provider.dart';
+import 'package:flutter_rhine/provider/main/main_provider.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/routers/routes.dart';
 import 'package:provide/provide.dart';
@@ -10,12 +10,12 @@ import 'package:provide/provide.dart';
 import 'constants/colors.dart';
 
 void main() {
-  var loginProvide = LoginProvide();
-  var mainProvide = MainPageProvide();
+  var loginProvide = LoginProvider();
+  var mainProvide = MainPageProvider();
   var providers = Providers();
 
-  providers..provide(Provider<LoginProvide>.value(loginProvide));
-  providers..provide(Provider<MainPageProvide>.value(mainProvide));
+  providers..provide(Provider<LoginProvider>.value(loginProvide));
+  providers..provide(Provider<MainPageProvider>.value(mainProvide));
 
   runApp(ProviderNode(
     child: MyApp(),

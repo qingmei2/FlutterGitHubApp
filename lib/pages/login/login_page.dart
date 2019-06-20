@@ -3,7 +3,7 @@ import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/pages/main/main_page.dart';
-import 'package:flutter_rhine/provide/login/login_provide.dart';
+import 'package:flutter_rhine/provider/login/login_provider.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/widget/global_progress_bar.dart';
 import 'package:provide/provide.dart';
@@ -18,8 +18,8 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // 先尝试自动登录
     _tryAutoLogin(context);
-    return Provide<LoginProvide>(builder: (context, child, val) {
-      final LoginProvide provide = Provide.value<LoginProvide>(context);
+    return Provide<LoginProvider>(builder: (context, child, val) {
+      final LoginProvider provide = Provide.value<LoginProvider>(context);
       return Scaffold(
         appBar: AppBar(
           title: Container(
@@ -92,7 +92,7 @@ class LoginPage extends StatelessWidget {
           controller: userNameController,
           keyboardType: TextInputType.text,
           onChanged: (String newValue) =>
-              Provide.value<LoginProvide>(context).onUserNameChanged(newValue),
+              Provide.value<LoginProvider>(context).onUserNameChanged(newValue),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             labelText: 'Username or email address',
@@ -109,7 +109,7 @@ class LoginPage extends StatelessWidget {
           obscureText: true,
           // 输入密码模式
           onChanged: (String newValue) =>
-              Provide.value<LoginProvide>(context).onPasswordChanged(newValue),
+              Provide.value<LoginProvider>(context).onPasswordChanged(newValue),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             labelText: 'Password',
@@ -148,14 +148,14 @@ class LoginPage extends StatelessWidget {
 
   /// 尝试自动登录
   void _tryAutoLogin(BuildContext context) {
-    Provide.value<LoginProvide>(context)
+    Provide.value<LoginProvider>(context)
         .tryAutoLogin(userNameController, passwordController)
         .then((res) => _onLoginSuccess(context, res));
   }
 
   /// 登录按钮点击事件
   void _onLoginButtonClicked(BuildContext context) {
-    final LoginProvide provide = Provide.value<LoginProvide>(context);
+    final LoginProvider provide = Provide.value<LoginProvider>(context);
     final String username = provide.username;
     final String password = provide.password;
 
@@ -172,7 +172,7 @@ class LoginPage extends StatelessWidget {
 
   /// 登录结果处理
   void _onLoginSuccess(BuildContext context, DataResult res) {
-    final LoginProvide provide = Provide.value<LoginProvide>(context);
+    final LoginProvider provide = Provide.value<LoginProvider>(context);
     if (res != null && res.result) {
       // 清除登录信息
       provide.updateTextField("", userNameController);
