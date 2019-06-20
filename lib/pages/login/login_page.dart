@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
-import 'package:flutter_rhine/pages/home/main_page.dart';
-import 'package:flutter_rhine/provide/login.dart';
+import 'package:flutter_rhine/pages/main/main_page.dart';
+import 'package:flutter_rhine/provide/login/login_provide.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:provide/provide.dart';
 
@@ -140,10 +140,10 @@ class LoginPage extends StatelessWidget {
     result.then((res) {
       if (res != null && res.result) {
         Future.delayed(const Duration(seconds: 1), () {
+          Navigator.pop(context);
           Application.router.navigateTo(context, MainPage.path);
           return true;
         });
-        Navigator.pop(context);
       }
     });
   }
