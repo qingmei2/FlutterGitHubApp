@@ -98,6 +98,7 @@ class LoginPage extends StatelessWidget {
         margin: EdgeInsets.only(top: 8.0),
         child: TextField(
           keyboardType: TextInputType.text,
+          obscureText: true,    // 输入密码模式
           onChanged: (String newValue) =>
               Provide.value<LoginProvide>(context).onPasswordChanged(newValue),
           decoration: InputDecoration(
