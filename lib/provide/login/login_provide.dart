@@ -11,27 +11,34 @@ import 'package:flutter_rhine/repository/sputils.dart';
 import 'package:flutter_rhine/service/service_manager.dart';
 
 class LoginProvide with ChangeNotifier {
-  bool progressVisible;
-  String username;
-  String password;
+  bool _progressVisible;
+  bool _tryAutoLogin = true;
+  String _username;
+  String _password;
+
+  bool get progressVisible => _progressVisible;
+
+  String get username => _username;
+
+  String get password => _password;
 
   void updateProgressVisible(final bool visible) {
-    if (progressVisible != visible) {
-      progressVisible = visible;
+    if (_progressVisible != visible) {
+      _progressVisible = visible;
       notifyListeners();
     }
   }
 
   void onUserNameChanged(final String newValue) {
-    if (username != newValue) {
-      username = newValue;
+    if (_username != newValue) {
+      _username = newValue;
       notifyListeners();
     }
   }
 
   void onPasswordChanged(final String newValue) {
-    if (password != newValue) {
-      password = newValue;
+    if (_password != newValue) {
+      _password = newValue;
       notifyListeners();
     }
   }
@@ -42,7 +49,17 @@ class LoginProvide with ChangeNotifier {
   }
 
   /// 用户自动登录
-  Future<DataResult> autoLogin() async {
+  /// [param] usernameController 自动登录时会将上次登录的用户数据反映在ui上
+  /// [param] passwordController 同上
+  Future<DataResult> tryAutoLogin(
+    final TextEditingController usernameController,
+    final TextEditingController passwordController,
+  ) async {
+    if (!_tryAutoLogin) {
+      return null;
+    }
+    _tryAutoLogin = false;
+
     final String usernameTemp = await SpUtils.get(Config.USER_NAME_KEY) ?? '';
     final String passwordTemp = await SpUtils.get(Config.PW_KEY) ?? '';
 
@@ -50,9 +67,11 @@ class LoginProvide with ChangeNotifier {
       return DataResult(null, false);
     }
 
-    username = usernameTemp;
-    password = passwordTemp;
-    notifyListeners();
+    // 将登录数据更新在ui上
+    _username = usernameTemp;
+    _password = passwordTemp;
+    updateTextField(_username, usernameController);
+    updateTextField(_password, passwordController);
 
     return login();
   }
@@ -63,14 +82,14 @@ class LoginProvide with ChangeNotifier {
       return new DataResult(null, false);
     }
 
-    final String type = username + ":" + password;
+    final String type = _username + ":" + _password;
     var bytes = utf8.encode(type);
     var base64Str = base64.encode(bytes);
     if (Config.DEBUG) {
       print("base64Str login " + base64Str);
     }
 
-    await SpUtils.save(Config.USER_NAME_KEY, username);
+    await SpUtils.save(Config.USER_NAME_KEY, _username);
     await SpUtils.save(Config.USER_BASIC_CODE, base64Str);
 
     final Map requestParams = {
@@ -87,7 +106,7 @@ class LoginProvide with ChangeNotifier {
         json.encode(requestParams), null, new Options(method: "post"));
     var resultData;
     if (res != null && res.result) {
-      await SpUtils.save(Config.PW_KEY, password);
+      await SpUtils.save(Config.PW_KEY, _password);
       resultData = await getUserInfo(null);
 
       if (Config.DEBUG) {
@@ -117,15 +136,4 @@ class LoginProvide with ChangeNotifier {
 
     return await next();
   }
-}
-
-enum LoginPageEvent {
-  /// 用户名为空
-  emptyUsernameInput,
-
-  /// 密码为空
-  emptyPasswordInput,
-
-  /// 账号密码错误
-  loginFailedWithAuthError
 }

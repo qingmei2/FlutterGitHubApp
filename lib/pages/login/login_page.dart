@@ -17,7 +17,6 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 先尝试自动登录
-    print('LoginPage#build');
     _tryAutoLogin(context);
     return Provide<LoginProvide>(builder: (context, child, val) {
       final LoginProvide provide = Provide.value<LoginProvide>(context);
@@ -149,8 +148,9 @@ class LoginPage extends StatelessWidget {
 
   /// 尝试自动登录
   void _tryAutoLogin(BuildContext context) {
-    final LoginProvide provide = Provide.value<LoginProvide>(context);
-    provide.autoLogin().then((res) => _onLoginSuccess(context, res));
+    Provide.value<LoginProvide>(context)
+        .tryAutoLogin(userNameController, passwordController)
+        .then((res) => _onLoginSuccess(context, res));
   }
 
   /// 登录按钮点击事件
