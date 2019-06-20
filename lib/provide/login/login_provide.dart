@@ -11,8 +11,16 @@ import 'package:flutter_rhine/repository/sputils.dart';
 import 'package:flutter_rhine/service/service_manager.dart';
 
 class LoginProvide with ChangeNotifier {
+  bool progressVisible;
   String username;
   String password;
+
+  void updateProgressVisible(final bool visible) {
+    if (progressVisible != visible) {
+      progressVisible = visible;
+      notifyListeners();
+    }
+  }
 
   void onUserNameChanged(final String newValue) {
     if (username != newValue) {
@@ -48,6 +56,8 @@ class LoginProvide with ChangeNotifier {
     };
     serviceManager.clearAuthorization();
 
+    updateProgressVisible(true);
+
     var res = await serviceManager.netFetch(Api.authorization,
         json.encode(requestParams), null, new Options(method: "post"));
     var resultData;
@@ -61,6 +71,9 @@ class LoginProvide with ChangeNotifier {
         print(res.data.toString());
       }
     }
+
+    updateProgressVisible(false);
+
     return new DataResult(resultData, res.result);
   }
 

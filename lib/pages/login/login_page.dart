@@ -4,6 +4,7 @@ import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/pages/main/main_page.dart';
 import 'package:flutter_rhine/provide/login/login_provide.dart';
 import 'package:flutter_rhine/routers/application.dart';
+import 'package:flutter_rhine/widget/global_progress_bar.dart';
 import 'package:provide/provide.dart';
 
 class LoginPage extends StatelessWidget {
@@ -11,34 +12,46 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Container(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.only(left: 16.0),
-          child: Text(
-            'Sign in',
-            textAlign: TextAlign.start,
+    return Provide<LoginProvide>(builder: (context, child, val) {
+      final LoginProvide provide = Provide.value<LoginProvide>(context);
+      return Scaffold(
+        appBar: AppBar(
+          title: Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 16.0),
+            child: Text(
+              'Sign in',
+              textAlign: TextAlign.start,
+            ),
           ),
         ),
-      ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
-          child: SingleChildScrollView(
-            child: Column(
+        body: Container(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.loose,
               children: <Widget>[
-                _loginTitle(),
-                _usernameInput(context),
-                _passwordInput(context),
-                _signInButton(context)
+                SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      _loginTitle(),
+                      _usernameInput(context),
+                      _passwordInput(context),
+                      _signInButton(context)
+                    ],
+                  ),
+                ),
+                ProgressBar(
+                  visibility: provide.progressVisible ?? false,
+                ),
               ],
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   /// 顶部图标和标题
