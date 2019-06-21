@@ -10,3 +10,13 @@ const String mainNavReposNormal = '${imageHost}ic_nav_task_normal.png';
 const String mainNavReposPressed = '${imageHost}ic_nav_task_checked.png';
 const String mainNavProfileNormal = '${imageHost}ic_nav_mine_normal.png';
 const String mainNavProfilePressed = '${imageHost}ic_nav_mine_checked.png';
+
+/// eventsPage
+const String eventsForkChecked = '${imageHost}ic_fork_checked.png';
+const String eventsStarChecked = '${imageHost}ic_star_checked.png';
+const String eventsStarUnChecked = '${imageHost}ic_star_checked.png';
+
+/// profilePage
+const String mineShared = '${imageHost}ic_open_in_new_white_24dp.png';
+const String mineLocationIcon = '${imageHost}ic_location_on_gray.png';
+
