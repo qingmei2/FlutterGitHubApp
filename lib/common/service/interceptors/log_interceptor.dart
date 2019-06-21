@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_rhine/constants/config.dart';
+import 'package:flutter_rhine/common/constants/config.dart';
 
 class LogsInterceptors extends InterceptorsWrapper {
   @override

@@ -6,6 +6,7 @@ class MainEventsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
+        automaticallyImplyLeading: false,
       ),
       body: Text('Home'),
     );

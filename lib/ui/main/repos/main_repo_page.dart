@@ -6,6 +6,7 @@ class MainReposPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Repos'),
+        automaticallyImplyLeading: false,
       ),
       body: Text('Repos'),
     );

@@ -39,6 +39,7 @@ class LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Container(
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.only(left: 16.0),
