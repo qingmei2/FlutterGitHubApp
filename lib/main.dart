@@ -7,8 +7,8 @@ import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/routers/routes.dart';
 import 'package:provider/provider.dart';
 
+import 'common/constants/colors.dart';
 import 'common/providers/global_user_model.dart';
-import 'constants/colors.dart';
 
 void main() {
   var globalUserInfoModel = GlobalUserModel();

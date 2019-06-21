@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_rhine/constants/config.dart';
+import 'package:flutter_rhine/common/constants/config.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
 
 class TokenInterceptor extends InterceptorsWrapper {

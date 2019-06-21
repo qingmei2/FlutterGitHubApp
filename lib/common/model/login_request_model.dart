@@ -1,4 +1,4 @@
-import 'package:flutter_rhine/constants/ignore.dart';
+import 'package:flutter_rhine/common/constants/ignore.dart';
 
 /// github login api params.
 class LoginRequestModel {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rhine/common/constants/assets.dart';
+import 'package:flutter_rhine/common/constants/colors.dart';
 import 'package:flutter_rhine/common/providers/global_user_model.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
-import 'package:flutter_rhine/constants/assets.dart';
-import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/ui/login/login_page_model.dart';

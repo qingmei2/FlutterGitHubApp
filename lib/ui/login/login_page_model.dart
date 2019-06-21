@@ -2,15 +2,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rhine/common/constants/api.dart';
+import 'package:flutter_rhine/common/constants/config.dart';
+import 'package:flutter_rhine/common/constants/ignore.dart';
 import 'package:flutter_rhine/common/model/user.dart';
 import 'package:flutter_rhine/common/providers/global_user_model.dart';
-import 'package:flutter_rhine/constants/api.dart';
-import 'package:flutter_rhine/constants/config.dart';
-import 'package:flutter_rhine/constants/ignore.dart';
+import 'package:flutter_rhine/common/service/service_manager.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
-import 'package:flutter_rhine/model/user.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
-import 'package:flutter_rhine/service/service_manager.dart';
 
 class LoginPageModel with ChangeNotifier {
   bool _progressVisible;

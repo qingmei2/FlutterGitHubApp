@@ -1,8 +1,8 @@
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_rhine/service/api_code.dart';
-import 'package:flutter_rhine/service/result_data.dart';
+import 'package:flutter_rhine/common/service/api_code.dart';
+import 'package:flutter_rhine/common/service/result_data.dart';
 
 import 'interceptors/header_interceptor.dart';
 import 'interceptors/response_interceptor.dart';

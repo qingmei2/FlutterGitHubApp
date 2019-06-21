@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rhine/constants/assets.dart';
-import 'package:flutter_rhine/constants/colors.dart';
+import 'package:flutter_rhine/common/constants/assets.dart';
+import 'package:flutter_rhine/common/constants/colors.dart';
 import 'package:flutter_rhine/ui/main/mine/main_profile_page.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
 import 'package:flutter_rhine/ui/main/main_page_model.dart';
