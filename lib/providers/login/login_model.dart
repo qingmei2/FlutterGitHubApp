@@ -7,6 +7,7 @@ import 'package:flutter_rhine/constants/config.dart';
 import 'package:flutter_rhine/constants/ignore.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/model/user.dart';
+import 'package:flutter_rhine/providers/global/global_user_model.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
 import 'package:flutter_rhine/service/service_manager.dart';
 
@@ -49,11 +50,14 @@ class LoginPageModel with ChangeNotifier {
   }
 
   /// 用户自动登录
-  /// [param] usernameController 自动登录时会将上次登录的用户数据反映在ui上
-  /// [param] passwordController 同上
+  /// [usernameController] 自动登录时会将上次登录的用户数据反映在ui上
+  /// [passwordController] 同上
+  /// [globalUserModel]    登录成功，将用户信息存储更新
+  ///
   Future<DataResult> tryAutoLogin(
     final TextEditingController usernameController,
     final TextEditingController passwordController,
+    final GlobalUserModel globalUserModel,
   ) async {
     if (!_tryAutoLogin) {
       return null;
@@ -73,11 +77,12 @@ class LoginPageModel with ChangeNotifier {
     updateTextField(_username, usernameController);
     updateTextField(_password, passwordController);
 
-    return login();
+    return login(globalUserModel);
   }
 
   /// 用户登录
-  Future<DataResult> login() async {
+  /// [globalUserModel]    登录成功，将用户信息存储更新
+  Future<DataResult> login(final GlobalUserModel globalUserModel) async {
     if (progressVisible == true) {
       return new DataResult(null, false);
     }
@@ -107,7 +112,7 @@ class LoginPageModel with ChangeNotifier {
     var resultData;
     if (res != null && res.result) {
       await SpUtils.save(Config.PW_KEY, _password);
-      resultData = await getUserInfo(null);
+      resultData = await getUserInfo(null, globalUserModel);
 
       if (Config.DEBUG) {
         print("user result " + resultData.result.toString());
@@ -122,12 +127,21 @@ class LoginPageModel with ChangeNotifier {
   }
 
   /// 获取用户登录信息
-  getUserInfo(final String userName, {bool needDb = false}) async {
+  /// [userName] 查询对应username的用户信息，该参数为null时，请求用户自己的用户信息
+  /// [globalUserModel]  登录成功，将用户信息存入内存
+  /// [needDb]   是否需要将用户信息存储数据库
+  getUserInfo(final String userName, final GlobalUserModel globalUserModel,
+      {final bool needDb = false}) async {
     next() async {
       var res = await serviceManager.netFetch(Api.userInfo, null, null, null);
       if (res != null && res.result) {
         final User user = User.fromJson(res.data);
-        SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
+
+        // 存入持久层
+        if (needDb) SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
+        // 存入内存
+        globalUserModel.saveUserInfo(user);
+        
         return DataResult(user, true);
       } else {
         return DataResult(res.data, false);

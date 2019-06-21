@@ -3,22 +3,40 @@ import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/pages/main/main_page.dart';
+import 'package:flutter_rhine/providers/global/global_user_model.dart';
 import 'package:flutter_rhine/providers/login/login_model.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/widget/global_progress_bar.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   static final String path = 'login_page';
+
+  @override
+  State<StatefulWidget> createState() {
+    return LoginPageState();
+  }
+}
+
+class LoginPageState extends State<LoginPage> {
+  GlobalUserModel _globalUserModel;
 
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // 初始化Provider
+    _globalUserModel = Provider.of<GlobalUserModel>(context);
+
+    // 尝试自动登录
+    _tryAutoLogin(_globalUserModel);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
-    // 先尝试自动登录
-    _tryAutoLogin(context);
     return Scaffold(
       appBar: AppBar(
         title: Container(
@@ -48,8 +66,11 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
               ),
-              ProgressBar(
-                visibility: _loginModel.progressVisible ?? false,
+              Consumer<LoginPageModel>(
+                builder: (context, LoginPageModel _loginModel, child) =>
+                    ProgressBar(
+                      visibility: _loginModel.progressVisible ?? false,
+                    ),
               ),
             ],
           ),
@@ -134,7 +155,7 @@ class LoginPage extends StatelessWidget {
           minHeight: 50.0,
         ),
         child: FlatButton(
-          onPressed: () => _onLoginButtonClicked(context),
+          onPressed: () => _onLoginButtonClicked(),
           color: colorSecondaryDark,
           highlightColor: colorPrimary,
           shape: RoundedRectangleBorder(
@@ -154,14 +175,14 @@ class LoginPage extends StatelessWidget {
   }
 
   /// 尝试自动登录
-  void _tryAutoLogin(BuildContext context) {
+  void _tryAutoLogin(GlobalUserModel globalUserModel) {
     Provider.of<LoginPageModel>(context)
-        .tryAutoLogin(userNameController, passwordController)
-        .then((res) => _onLoginSuccess(context, res));
+        .tryAutoLogin(userNameController, passwordController, globalUserModel)
+        .then((res) => _onLoginSuccess(res));
   }
 
   /// 登录按钮点击事件
-  void _onLoginButtonClicked(BuildContext context) {
+  void _onLoginButtonClicked() {
     final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
 
     final String username = _loginModel.username;
@@ -174,12 +195,11 @@ class LoginPage extends StatelessWidget {
       return;
     }
 
-    final Future result = _loginModel.login();
-    result.then((res) => _onLoginSuccess(context, res));
+    _loginModel.login(_globalUserModel).then((res) => _onLoginSuccess(res));
   }
 
   /// 登录结果处理
-  void _onLoginSuccess(BuildContext context, DataResult res) {
+  void _onLoginSuccess(DataResult res) {
     final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
 
     if (res != null && res.result) {

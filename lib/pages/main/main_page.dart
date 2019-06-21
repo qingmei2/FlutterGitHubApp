@@ -63,8 +63,8 @@ class MainPage extends StatelessWidget {
 
   Image _getTabIcon(int currentPageIndex, int tabIndex) =>
       (currentPageIndex == tabIndex)
-          ? _bottomTabIcons[tabIndex][0]
-          : _bottomTabIcons[tabIndex][1];
+          ? _bottomTabIcons[tabIndex][1]
+          : _bottomTabIcons[tabIndex][0];
 
   Text _getTabTitle(int currentPageIndex, int tabIndex) {
     final String title = _bottomTabTitles[tabIndex];
