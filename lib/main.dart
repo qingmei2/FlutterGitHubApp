@@ -1,14 +1,14 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rhine/pages/login/login_page.dart';
-import 'package:flutter_rhine/providers/global/global_user_model.dart';
-import 'package:flutter_rhine/providers/main/main_model.dart';
+import 'package:flutter_rhine/ui/login/login_page.dart';
+import 'package:flutter_rhine/ui/login/login_page_model.dart';
+import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/routers/routes.dart';
 import 'package:provider/provider.dart';
 
+import 'common/providers/global_user_model.dart';
 import 'constants/colors.dart';
-import 'providers/login/login_model.dart';
 
 void main() {
   var globalUserInfoModel = GlobalUserModel();

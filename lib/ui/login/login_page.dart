@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
 import 'package:flutter_rhine/dao/dao_result.dart';
-import 'package:flutter_rhine/pages/main/main_page.dart';
-import 'package:flutter_rhine/providers/global/global_user_model.dart';
-import 'package:flutter_rhine/providers/login/login_model.dart';
 import 'package:flutter_rhine/routers/application.dart';
-import 'package:flutter_rhine/widget/global_progress_bar.dart';
+import 'package:flutter_rhine/ui/login/login_page_model.dart';
+import 'package:flutter_rhine/ui/main/main_page.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -107,7 +107,7 @@ class LoginPageState extends State<LoginPage> {
   /// 用户名输入框
   Widget _usernameInput(BuildContext context) {
     return Consumer<LoginPageModel>(
-      builder: (context, LoginPageModel model, child) => Container(
+      builder: (BuildContext context, LoginPageModel model, child) => Container(
             margin: EdgeInsets.only(top: 24.0),
             child: TextField(
               controller: userNameController,

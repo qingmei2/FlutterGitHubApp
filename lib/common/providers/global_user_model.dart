@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rhine/model/user.dart';
+import 'package:flutter_rhine/common/model/user.dart';
 
 class GlobalUserModel with ChangeNotifier {
   User _user;

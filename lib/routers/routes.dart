@@ -1,7 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rhine/pages/main/main_page.dart';
-import 'package:flutter_rhine/pages/login/login_page.dart';
+import 'package:flutter_rhine/ui/main/main_page.dart';
+import 'package:flutter_rhine/ui/login/login_page.dart';
 import 'package:flutter_rhine/routers/route_handler.dart';
 
 class Routes {

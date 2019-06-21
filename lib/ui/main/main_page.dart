@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/constants/assets.dart';
 import 'package:flutter_rhine/constants/colors.dart';
-import 'package:flutter_rhine/pages/main/main_profile_page.dart';
-import 'package:flutter_rhine/pages/main/main_repo_page.dart';
-import 'package:flutter_rhine/providers/main/main_model.dart';
+import 'package:flutter_rhine/ui/main/mine/main_profile_page.dart';
+import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
+import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:provider/provider.dart';
 
-import 'main_events_page.dart';
+import 'package:flutter_rhine/ui/main/home/main_events_page.dart';
 
 class MainPage extends StatelessWidget {
   static final String path = 'main_page';
