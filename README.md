@@ -7,7 +7,7 @@
 * 1.直接通过git命令行进行clone:
 
 ```shell
-$ git clone https://github.com/qingmei2/Flutter-Rhine.git
+$ git clone https://github.com/qingmei2/FlutterGitHubApp.git
 ```
 
 * 2.注册你的GithubApp
