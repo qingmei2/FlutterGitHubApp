@@ -68,7 +68,7 @@ class LoginPageModel with ChangeNotifier {
     final String passwordTemp = await SpUtils.get(Config.PW_KEY) ?? '';
 
     if (usernameTemp == '' || passwordTemp == '') {
-      return DataResult(null, false);
+      return DataResult.failure();
     }
 
     // 将登录数据更新在ui上

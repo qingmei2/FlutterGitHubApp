@@ -55,6 +55,7 @@ class _MainProfilePageState extends State<MainProfilePage> {
             ),
             Container(
               margin: EdgeInsets.only(top: 30.0),
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
               child: Text(
                 _userModel.user.login ?? "unknown",
                 style: TextStyle(
@@ -66,6 +67,7 @@ class _MainProfilePageState extends State<MainProfilePage> {
             ),
             Container(
               margin: EdgeInsets.only(top: 20.0),
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
               child: Text(
                 _userModel.user.bio ?? "no description.",
                 style: TextStyle(
@@ -76,6 +78,7 @@ class _MainProfilePageState extends State<MainProfilePage> {
             ),
             Container(
               margin: EdgeInsets.only(top: 20.0),
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
