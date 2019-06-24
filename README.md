@@ -5,10 +5,10 @@
 ## 屏幕截图
 
 <div align:left;display:inline;>
-<img width="270" height="585" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/art/login.png"/>
-<img width="270" height="585" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/screenshots/home.png"/>
-<img width="270" height="585" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/screenshots/repos.png"/>
-<img width="270" height="585" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/screenshots/profile.png"/>
+<img width="203" height="438" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/art/login.png"/>
+<img width="203" height="438" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/art/home.png"/>
+<img width="203" height="438" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/art/repos.png"/>
+<img width="203" height="438" src="https://github.com/qingmei2/FlutterGitHubApp/blob/master/art/profile.png"/>
 </div>
 
 ## 开始使用
