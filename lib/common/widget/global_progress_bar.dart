@@ -12,7 +12,7 @@ class ProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Offstage(
-      offstage: !visibility,
+      offstage: (!visibility),
       child: CircularProgressIndicator(
         strokeWidth: 3.0,
       ),

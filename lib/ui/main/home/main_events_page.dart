@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/model/event.dart';
 import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
-import 'package:flutter_rhine/dao/dao_result.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_item.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -27,36 +27,33 @@ class _MainEventsPageState extends State<MainEventsPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _globalUserModel = Provider.of<GlobalUserModel>(context);
+
+    _mainEventsModel.fetchEvents(_globalUserModel.user.login);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        automaticallyImplyLeading: false, // 隐藏返回键
+    return ChangeNotifierProvider.value(
+      value: _mainEventsModel,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Home'),
+          automaticallyImplyLeading: false, // 隐藏返回键
+        ),
+        body: _eventList(),
       ),
-      body: _eventList(),
     );
   }
 
   /// 渲染列表
   Widget _eventList() {
-    return FutureBuilder(
-      future: _mainEventsModel.fetchEvents(_globalUserModel.user.login),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data is DataResult && snapshot.data.data.length > 0) {
-            final List<Event> renders = snapshot.data.data;
-            return _initExistDataList(renders);
-          } else {
-            return Center(
-              child: Text('空空如也'),
-            );
-          }
+    return Consumer<MainEventsModel>(
+      builder: (context, MainEventsModel model, child) {
+        if (model.eventPagedList.length > 0) {
+          return _initExistDataList(model.eventPagedList);
         } else {
           return Center(
-            child: ProgressBar(visibility: _mainEventsModel.isLoading),
+            child: ProgressBar(visibility: _mainEventsModel.isLoading ?? false),
           );
         }
       },
@@ -67,12 +64,7 @@ class _MainEventsPageState extends State<MainEventsPage> {
   /// [renders] 事件列表
   Widget _initExistDataList(final List<Event> renders) {
     return EasyRefresh(
-      refreshFooter: ClassicsFooter(
-        key: _footerKey,
-        loadedText: '加载中...',
-        noMoreText: '没有更多了',
-        showMore: true,
-      ),
+      refreshFooter: GlobalHideFooter(_footerKey),
       child: ListView.builder(
         itemCount: renders.length,
         itemBuilder: (context, index) {
@@ -98,6 +90,10 @@ class _MainEventsPageState extends State<MainEventsPage> {
           );
         },
       ),
+      autoLoad: true,
+      loadMore: () async {
+        await _mainEventsModel.fetchEvents(_globalUserModel.user.login);
+      },
     );
   }
 }

@@ -10,14 +10,12 @@ class MainEventsModel extends ChangeNotifier {
   List<Event> _eventPagedList = [];
 
   // 当前页数
-  int _pagedIndex = 1;
+  int _pagedIndex = 0;
 
   // 加载框是否可见
   bool _isLoading;
 
   List<Event> get eventPagedList => _eventPagedList;
-
-  int get pagedIndex => _pagedIndex;
 
   bool get isLoading => _isLoading;
 
@@ -26,6 +24,13 @@ class MainEventsModel extends ChangeNotifier {
       _isLoading = visible;
       notifyListeners();
     }
+  }
+
+  void _onPagedLoadSuccess(final List<Event> newEvents) {
+    _eventPagedList.addAll(newEvents);
+    _pagedIndex++;
+
+    notifyListeners();
   }
 
   /// 更新列表数据
@@ -37,12 +42,19 @@ class MainEventsModel extends ChangeNotifier {
 
     updateProgressVisible(true);
 
-    var res = await serviceManager.netFetch(Api.userEvents(username),
-        Api.getPageParams('?', _pagedIndex), null, null);
+    var res = await serviceManager.netFetch(
+        Api.userEvents(username) + Api.getPageParams('?', _pagedIndex + 1),
+        null,
+        null,
+        null);
+
     var resultData;
     if (res != null && res.result) {
       final List<Event> events = getEventList(res.data);
+      _onPagedLoadSuccess(events);
+
       resultData = DataResult.success(events);
+
       if (Config.DEBUG) {
         print("resultData events result " + resultData.result.toString());
         print(resultData.data);
