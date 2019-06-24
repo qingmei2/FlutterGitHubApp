@@ -21,16 +21,17 @@ class _MainProfilePageState extends State<MainProfilePage> {
         textDirection: TextDirection.ltr,
         fit: StackFit.loose,
         children: <Widget>[
-          Container(
-            alignment: Alignment.topRight,
-            margin: EdgeInsets.only(top: 40.0, right: 16.0),
-            child: Image(
-              image: AssetImage(mineShared),
-              width: 25.0,
-              height: 25.0,
-              fit: BoxFit.contain,
-            ),
-          ),
+// TODO hide expanded menu.
+//          Container(
+//            alignment: Alignment.topRight,
+//            margin: EdgeInsets.only(top: 40.0, right: 16.0),
+//            child: Image(
+//              image: AssetImage(mineShared),
+//              width: 25.0,
+//              height: 25.0,
+//              fit: BoxFit.contain,
+//            ),
+//          ),
           _userInfoLayer(),
         ],
       ),
