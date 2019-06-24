@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_rhine/common/model/event.dart';
 import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/dao/dao_result.dart';
+import 'package:flutter_rhine/ui/main/home/main_events_item.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_model.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +17,8 @@ class MainEventsPage extends StatefulWidget {
 class _MainEventsPageState extends State<MainEventsPage> {
   MainEventsModel _mainEventsModel = MainEventsModel();
   GlobalUserModel _globalUserModel;
+
+  GlobalKey<RefreshFooterState> _footerKey = new GlobalKey<RefreshFooterState>();
 
   @override
   void didChangeDependencies() {
@@ -31,20 +37,45 @@ class _MainEventsPageState extends State<MainEventsPage> {
     );
   }
 
+  /// 渲染列表
   Widget _eventList() {
     return FutureBuilder(
       future: _mainEventsModel.fetchEvents(_globalUserModel.user.login),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Center(
-            child: Text('加载完成'),
-          );
+          if (snapshot.data is DataResult && snapshot.data.data.length > 0) {
+            final List<Event> renders = snapshot.data.data;
+            return _initExistDataList(renders);
+          } else {
+            return Center(
+              child: Text('空空如也'),
+            );
+          }
         } else {
           return Center(
-            child: Text('加载中'),
+            child: Text('加载中...'),
           );
         }
       },
+    );
+  }
+
+  /// 有数据时的列表
+  /// [renders] 事件列表
+  Widget _initExistDataList(final List<Event> renders) {
+    return EasyRefresh(
+      refreshFooter: ClassicsFooter(
+        key: _footerKey,
+        loadedText: '加载中...',
+        noMoreText: '没有更多了',
+        showMore: true,
+      ),
+      child: ListView.builder(
+        itemCount: renders.length,
+        itemBuilder: (context, index) {
+          return MainEventItem(event: renders[index]);
+        },
+      ),
     );
   }
 }
