@@ -73,14 +73,14 @@ class _MainEventsPageState extends State<MainEventsPage> {
               if (action.isActorAction) {
                 // 用户名点击事件
                 Fluttertoast.showToast(
-                  msg: 'user: ' + action.url,
+                  msg: '用户： ' + action.url,
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                 );
               } else {
                 // repo点击事件
                 Fluttertoast.showToast(
-                  msg: 'repo: ' + action.url,
+                  msg: '被点击的Repo： ' + action.url,
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                 );

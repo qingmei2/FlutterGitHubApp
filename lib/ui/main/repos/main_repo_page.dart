@@ -6,6 +6,7 @@ import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_item.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class MainReposPage extends StatefulWidget {
@@ -67,7 +68,13 @@ class _MainReposPageState extends State<MainReposPage> {
         itemBuilder: (context, index) {
           return MainRepoPagedItem(
             repo: renders[index],
-            observer: (MainRepoAction action) {},
+            observer: (MainRepoAction action) {
+              // repo的点击事件
+              Fluttertoast.showToast(
+                  msg: '被点击的Repo: ${action.repoUrl}',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM);
+            },
           );
         },
       ),

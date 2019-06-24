@@ -13,24 +13,29 @@ class MainRepoPagedItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          _itemTopLayout(),
-          _itemRepoName(),
-          _itemRepoDesc(),
-          _itemRepoOthers(),
-          Container(
-            margin: EdgeInsets.only(top: 12.0),
-            child: Divider(
-              height: 1.0,
-              color: Colors.grey,
-            ),
-          )
-        ],
+    return GestureDetector(
+      child: Container(
+        padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            _itemTopLayout(),
+            _itemRepoName(),
+            _itemRepoDesc(),
+            _itemRepoOthers(),
+            Container(
+              margin: EdgeInsets.only(top: 12.0),
+              child: Divider(
+                height: 1.0,
+                color: Colors.grey,
+              ),
+            )
+          ],
+        ),
       ),
+      onTap: () {
+        observer(MainRepoAction(repo.url));
+      },
     );
   }
 
@@ -68,7 +73,7 @@ class MainRepoPagedItem extends StatelessWidget {
           child: Container(
             width: 7.0,
             height: 7.0,
-            color: Colors.cyan,
+            color: fetchLanguageColor(repo.language),
           ),
         ),
         // 编程语言
@@ -186,6 +191,47 @@ class MainRepoPagedItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Color fetchLanguageColor(final String language) {
+    if (language == null) return Colors.transparent;
+    Color color;
+    switch (language) {
+      case 'Kotlin':
+        color = Color(0xFFF18E33);
+        break;
+      case 'Java':
+        color = Color(0xFFB07219);
+        break;
+      case 'JavaScript':
+        color = Color(0xFFF1E05A);
+        break;
+      case 'Python':
+        color = Color(0xFF3572A5);
+        break;
+      case 'HTML':
+        color = Color(0xFFE34C26);
+        break;
+      case 'CSS':
+        color = Color(0xFF563D7C);
+        break;
+      case 'C++':
+        color = Color(0xFFF34B7D);
+        break;
+      case 'C':
+        color = Color(0xFF555555);
+        break;
+      case 'ruby':
+        color = Color(0xFF701516);
+        break;
+      case 'dart':
+        color = Color.fromARGB(256, 79, 177, 170);
+        break;
+      default:
+        color = Color(0xFF455a64);
+    }
+
+    return color;
   }
 }
 
