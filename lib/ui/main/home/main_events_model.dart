@@ -31,25 +31,20 @@ class MainEventsModel extends ChangeNotifier {
   /// 更新列表数据
   /// [username] 用户名
   Future<DataResult> fetchEvents(final String username) async {
-    if (_isLoading) {
+    if (_isLoading == true) {
       return DataResult.failure();
     }
-    _isLoading = true;
 
     updateProgressVisible(true);
 
-    var res = serviceManager.netFetch(Api.userEvents(username),
+    var res = await serviceManager.netFetch(Api.userEvents(username),
         Api.getPageParams('?', _pagedIndex), null, null);
     var resultData;
     if (res != null && res.result) {
-      if (Config.DEBUG) {
-        print("api request result " + res.result.toString());
-      }
-
-      final List<Event> events = getEventList(res.result);
+      final List<Event> events = getEventList(res.data);
       resultData = DataResult.success(events);
       if (Config.DEBUG) {
-        print("user result " + resultData.result.toString());
+        print("resultData events result " + resultData.result.toString());
         print(resultData.data);
         print(res.data.toString());
       }
