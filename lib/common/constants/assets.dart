@@ -16,7 +16,11 @@ const String eventsForkChecked = '${imageHost}ic_fork_checked.png';
 const String eventsStarChecked = '${imageHost}ic_star_checked.png';
 const String eventsStarUnChecked = '${imageHost}ic_star_checked.png';
 
+/// reposPage
+const String reposFork = '${imageHost}ic_fork_unchecked.png';
+const String reposIssue = '${imageHost}ic_issue_gray.png';
+const String reposStar = '${imageHost}ic_star_unchecked.png';
+
 /// profilePage
 const String mineShared = '${imageHost}ic_open_in_new_white_24dp.png';
 const String mineLocationIcon = '${imageHost}ic_location_on_gray.png';
-

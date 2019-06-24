@@ -13,6 +13,10 @@ class Api {
   static String userEvents(final String username) =>
       "${host}users/$username/received_events";
 
+  /// [GET]用户仓库
+  static String userRepos(final String username) =>
+      '${host}users/$username/repos';
+
   /// 处理分页参数
   /// [tab]      分隔符
   /// [page]     页数

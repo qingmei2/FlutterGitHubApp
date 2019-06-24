@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_rhine/common/model/repo.dart';
 import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
+import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
+import 'package:flutter_rhine/ui/main/repos/main_repo_item.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_model.dart';
 import 'package:provider/provider.dart';
 
@@ -12,13 +17,16 @@ class MainReposPage extends StatefulWidget {
 
 class _MainReposPageState extends State<MainReposPage> {
   GlobalUserModel _globalUserModel;
-
   MainRepoModel _mainRepoModel = MainRepoModel();
 
+  final GlobalKey<RefreshFooterState> _footerKey =
+      GlobalKey<RefreshFooterState>();
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _globalUserModel = Provider.of<GlobalUserModel>(context);
+    _mainRepoModel.fetchRepos(_globalUserModel.user.login);
   }
 
   @override
@@ -30,8 +38,43 @@ class _MainReposPageState extends State<MainReposPage> {
           title: Text('Repos'),
           automaticallyImplyLeading: false,
         ),
-        body: Text('Repos'),
+        body: _repoList(),
       ),
+    );
+  }
+
+  Widget _repoList() {
+    return Consumer<MainRepoModel>(
+      builder: (context, MainRepoModel model, child) {
+        if (model.repoPagedList.length > 0) {
+          return _initExistDataList(model.repoPagedList);
+        } else {
+          return Center(
+            child: ProgressBar(visibility: _mainRepoModel.isLoading ?? false),
+          );
+        }
+      },
+    );
+  }
+
+  /// 有数据时的列表
+  /// [renders] 事件列表
+  Widget _initExistDataList(final List<Repo> renders) {
+    return EasyRefresh(
+      refreshFooter: GlobalHideFooter(_footerKey),
+      child: ListView.builder(
+        itemCount: renders.length,
+        itemBuilder: (context, index) {
+          return MainRepoPagedItem(
+            repo: renders[index],
+            observer: (MainRepoAction action) {},
+          );
+        },
+      ),
+      autoLoad: true,
+      loadMore: () async {
+        await _mainRepoModel.fetchRepos(_globalUserModel.user.login);
+      },
     );
   }
 }

@@ -20,8 +20,7 @@ class _MainEventsPageState extends State<MainEventsPage> {
   MainEventsModel _mainEventsModel = MainEventsModel();
   GlobalUserModel _globalUserModel;
 
-  GlobalKey<RefreshFooterState> _footerKey =
-      new GlobalKey<RefreshFooterState>();
+  GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   @override
   void didChangeDependencies() {
