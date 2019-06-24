@@ -1,4 +1,5 @@
 import 'package:common_utils/common_utils.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
@@ -7,16 +8,18 @@ import 'package:flutter_rhine/common/model/event.dart';
 class MainEventItem extends StatelessWidget {
   final Event event;
 
-  MainEventItem({Key key, @required this.event}) : super(key: key);
+  final EventItemActionObserver observer;
+
+  MainEventItem({Key key, @required this.event, this.observer})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final String title = _transformEventTitle(event);
     final String timeLine = _transformEventTime(event.createdAt);
+    final String imageAsset = _fetchEventImage(event);
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(left: 12.0, top: 12.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -31,7 +34,7 @@ class MainEventItem extends StatelessWidget {
             children: <Widget>[
               // 头像
               Container(
-                margin: EdgeInsets.only(top: 4.0),
+                margin: EdgeInsets.only(top: 16.0, left: 16.0),
                 child: ClipOval(
                   child: Image(
                     width: 40.0,
@@ -44,16 +47,18 @@ class MainEventItem extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Container(
-                  margin: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: Column(
+                  margin: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+                  height: 60.0,
+                  child: Flex(
+                    direction: Axis.vertical,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(bottom: 5.0),
-                        child: Text(
-                          title,
-                          style: TextStyle(color: colorPrimary, fontSize: 14.0),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 5.0),
+                          child: _transformEventTitle(event),
                         ),
                       ),
                       Text(
@@ -70,14 +75,14 @@ class MainEventItem extends StatelessWidget {
                 child: Image(
                   width: 20.0,
                   height: 20.0,
-                  image: AssetImage(eventsStarChecked),
+                  image: AssetImage(imageAsset),
                 ),
               ),
             ],
           ),
           // 分割线
           Container(
-            margin: EdgeInsets.only(top: 8.0,right: 12.0),
+            margin: EdgeInsets.only(left: 16.0, top: 12.0, right: 12.0),
             child: Divider(
               height: 1.0,
               color: Colors.grey,
@@ -88,7 +93,7 @@ class MainEventItem extends StatelessWidget {
     );
   }
 
-  String _transformEventTitle(final Event event) {
+  Widget _transformEventTitle(final Event event) {
     final String actor = event.actor.displayLogin;
     final String repo = event.repo.name;
 
@@ -108,7 +113,46 @@ class MainEventItem extends StatelessWidget {
         break;
     }
 
-    return '$actor $eventType $repo';
+    final TapGestureRecognizer recognizerActor = TapGestureRecognizer();
+    recognizerActor.onTap = () {
+      observer(EventItemAction(true, event.actor.url));
+    };
+    final TapGestureRecognizer recognizerRepo = TapGestureRecognizer();
+    recognizerRepo.onTap = () {
+      observer(EventItemAction(false, event.repo.url));
+    };
+
+    return RichText(
+      text: TextSpan(
+        text: '',
+        children: [
+          TextSpan(
+            text: actor,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.underline,
+              color: colorPrimaryText,
+            ),
+            recognizer: recognizerActor,
+          ),
+          TextSpan(
+            text: ' ' + eventType + ' ',
+            style: TextStyle(
+              color: colorPrimaryText,
+            ),
+          ),
+          TextSpan(
+            text: repo,
+            style: TextStyle(
+              color: colorPrimaryText,
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: recognizerRepo,
+          ),
+        ],
+      ),
+    );
   }
 
   String _transformEventTime(final String createAt) {
@@ -122,4 +166,26 @@ class MainEventItem extends StatelessWidget {
 
     return timeLine;
   }
+
+  String _fetchEventImage(final Event event) {
+    String asset = eventsForkChecked;
+    switch (event.type) {
+      case 'WatchEvent':
+        asset = eventsStarChecked;
+        break;
+      default:
+        asset = eventsForkChecked;
+        break;
+    }
+    return asset;
+  }
 }
+
+class EventItemAction {
+  final bool isActorAction;
+  final String url;
+
+  EventItemAction(this.isActorAction, this.url);
+}
+
+typedef void EventItemActionObserver(EventItemAction action);
