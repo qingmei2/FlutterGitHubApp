@@ -224,8 +224,8 @@ class MainRepoPagedItem extends StatelessWidget {
       case 'ruby':
         color = Color(0xFF701516);
         break;
-      case 'dart':
-        color = Color.fromARGB(256, 79, 177, 170);
+      case 'Dart':
+        color = Color(0xFF4FB1AA);
         break;
       default:
         color = Color(0xFF455a64);

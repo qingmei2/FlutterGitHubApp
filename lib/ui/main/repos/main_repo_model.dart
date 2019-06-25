@@ -15,6 +15,9 @@ class MainRepoModel extends ChangeNotifier {
   // 加载框是否可见
   bool _isLoading;
 
+  // 排序条件，默认按照更新时间排序
+  String _sort = 'updated';
+
   List<Repo> get repoPagedList => _repoPagedList;
 
   bool get isLoading => _isLoading;
@@ -33,17 +36,38 @@ class MainRepoModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _onSortParamChanged(final String sort) {
+    _sort = sort;
+
+    _clearList();
+  }
+
+  void _clearList() {
+    _repoPagedList.clear();
+    _pagedIndex = 0;
+
+    notifyListeners();
+  }
+
   /// 更新列表数据
   /// [username] 用户名
-  Future<DataResult> fetchRepos(final String username) async {
+  /// [sort] 排序方式，当该参数发生了改变，clear列表并刷新ui
+  Future<DataResult> fetchRepos(final String username,
+      {final String sort}) async {
     if (_isLoading == true) {
       return DataResult.failure();
+    }
+
+    if (sort != null && sort != _sort) {
+      _onSortParamChanged(sort);
     }
 
     updateProgressVisible(true);
 
     var res = await serviceManager.netFetch(
-        Api.userRepos(username) + Api.getPageParams('?', _pagedIndex + 1),
+        Api.userRepos(username) +
+            Api.getPageParams('?', _pagedIndex + 1) +
+            '&sort=$_sort',
         null,
         null,
         null);

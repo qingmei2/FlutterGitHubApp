@@ -38,6 +38,29 @@ class _MainReposPageState extends State<MainReposPage> {
         appBar: AppBar(
           title: Text('Repos'),
           automaticallyImplyLeading: false,
+          actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: (newValue) {
+                // 更新排序条件，刷新ui
+                _mainRepoModel.fetchRepos(_globalUserModel.user.login,
+                    sort: newValue);
+              },
+              itemBuilder: (context) => <PopupMenuItem<String>>[
+                    PopupMenuItem(
+                      value: 'updated',
+                      child: Text('Sort by Update'),
+                    ),
+                    PopupMenuItem(
+                      value: 'created',
+                      child: Text('Sort by Created'),
+                    ),
+                    PopupMenuItem(
+                      value: 'full_name',
+                      child: Text('Sort by FullName'),
+                    ),
+                  ],
+            ),
+          ],
         ),
         body: _repoList(),
       ),
