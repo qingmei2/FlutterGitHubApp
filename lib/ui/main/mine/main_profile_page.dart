@@ -9,9 +9,10 @@ class MainProfilePage extends StatefulWidget {
   State<StatefulWidget> createState() => _MainProfilePageState();
 }
 
-class _MainProfilePageState extends State<MainProfilePage> {
+class _MainProfilePageState extends State<MainProfilePage> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -21,17 +22,6 @@ class _MainProfilePageState extends State<MainProfilePage> {
         textDirection: TextDirection.ltr,
         fit: StackFit.loose,
         children: <Widget>[
-// TODO hide expanded menu.
-//          Container(
-//            alignment: Alignment.topRight,
-//            margin: EdgeInsets.only(top: 40.0, right: 16.0),
-//            child: Image(
-//              image: AssetImage(mineShared),
-//              width: 25.0,
-//              height: 25.0,
-//              fit: BoxFit.contain,
-//            ),
-//          ),
           _userInfoLayer(),
         ],
       ),
@@ -105,4 +95,7 @@ class _MainProfilePageState extends State<MainProfilePage> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

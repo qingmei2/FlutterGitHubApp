@@ -16,7 +16,8 @@ class MainEventsPage extends StatefulWidget {
   }
 }
 
-class _MainEventsPageState extends State<MainEventsPage> {
+class _MainEventsPageState extends State<MainEventsPage>
+    with AutomaticKeepAliveClientMixin {
   MainEventsModel _mainEventsModel = MainEventsModel();
   GlobalUserModel _globalUserModel;
 
@@ -32,6 +33,7 @@ class _MainEventsPageState extends State<MainEventsPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ChangeNotifierProvider.value(
       value: _mainEventsModel,
       child: Scaffold(
@@ -95,4 +97,7 @@ class _MainEventsPageState extends State<MainEventsPage> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

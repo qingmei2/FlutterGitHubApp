@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
+import 'package:flutter_rhine/ui/main/home/main_events_page.dart';
+import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:flutter_rhine/ui/main/mine/main_profile_page.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
-import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flutter_rhine/ui/main/home/main_events_page.dart';
-
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   static final String path = 'main_page';
 
+  @override
+  State<StatefulWidget> createState() {
+    return _MainPageState();
+  }
+}
+
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
   final List<List<Image>> _bottomTabIcons = [
     [
       Image.asset(mainNavEventsNormal, width: 24.0, height: 24.0),
@@ -28,17 +35,35 @@ class MainPage extends StatelessWidget {
 
   final List<String> _bottomTabTitles = ['home', 'repos', 'me'];
 
-  final List<Widget> _pagedList = [
-    MainEventsPage(),
-    MainReposPage(),
-    MainProfilePage()
-  ];
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final MainPageModel _pageModel = Provider.of<MainPageModel>(context);
     return Scaffold(
-      body: _pagedList[_pageModel.currentPageIndex],
+      body: PageView(
+        children: <Widget>[
+          MainEventsPage(),
+          MainReposPage(),
+          MainProfilePage()
+        ],
+        controller: _pageController,
+        onPageChanged: (index) {
+          _pageModel.onTabPageChanged(index,_pageController);
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: colorPrimary,
         items: <BottomNavigationBarItem>[
@@ -49,7 +74,9 @@ class MainPage extends StatelessWidget {
         currentIndex: _pageModel.currentPageIndex,
         iconSize: 24.0,
         type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) => _pageModel.onTabPageChanged(newIndex),
+        onTap: (newIndex) {
+          _pageModel.onTabPageChanged(newIndex,_pageController);
+        },
       ),
     );
   }

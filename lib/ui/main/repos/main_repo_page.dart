@@ -16,7 +16,7 @@ class MainReposPage extends StatefulWidget {
   }
 }
 
-class _MainReposPageState extends State<MainReposPage> {
+class _MainReposPageState extends State<MainReposPage> with AutomaticKeepAliveClientMixin {
   GlobalUserModel _globalUserModel;
   MainRepoModel _mainRepoModel = MainRepoModel();
 
@@ -32,6 +32,7 @@ class _MainReposPageState extends State<MainReposPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ChangeNotifierProvider.value(
       value: _mainRepoModel,
       child: Scaffold(
@@ -107,4 +108,7 @@ class _MainReposPageState extends State<MainReposPage> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
