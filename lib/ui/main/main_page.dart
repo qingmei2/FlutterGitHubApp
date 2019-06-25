@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:flutter_rhine/ui/main/mine/main_profile_page.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
 import 'package:provider/provider.dart';
+import 'package:android_intent/android_intent.dart';
 
 class MainPage extends StatefulWidget {
   static final String path = 'main_page';
@@ -52,37 +55,58 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     final MainPageModel _pageModel = Provider.of<MainPageModel>(context);
-    return Scaffold(
-      body: PageView(
-        children: <Widget>[
-          MainEventsPage(),
-          MainReposPage(),
-          MainProfilePage()
-        ],
-        controller: _pageController,
-        onPageChanged: (index) {
-          _pageModel.onTabPageChanged(index,_pageController);
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: colorPrimary,
-        items: <BottomNavigationBarItem>[
-          _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_EVENTS),
-          _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_REPOS),
-          _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_PROFILE),
-        ],
-        currentIndex: _pageModel.currentPageIndex,
-        iconSize: 24.0,
-        type: BottomNavigationBarType.fixed,
-        onTap: (newIndex) {
-          _pageModel.onTabPageChanged(newIndex,_pageController);
-        },
+    return WillPopScope(
+      onWillPop: () {
+        return _dialogExitApp(context);
+      },
+      child: Scaffold(
+        body: PageView(
+          children: <Widget>[
+            MainEventsPage(),
+            MainReposPage(),
+            MainProfilePage()
+          ],
+          controller: _pageController,
+          onPageChanged: (index) {
+            _pageModel.onTabPageChanged(index, _pageController);
+          },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: colorPrimary,
+          items: <BottomNavigationBarItem>[
+            _bottomNavigationBarItem(
+                _pageModel, MainPageModel.TAB_INDEX_EVENTS),
+            _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_REPOS),
+            _bottomNavigationBarItem(
+                _pageModel, MainPageModel.TAB_INDEX_PROFILE),
+          ],
+          currentIndex: _pageModel.currentPageIndex,
+          iconSize: 24.0,
+          type: BottomNavigationBarType.fixed,
+          onTap: (newIndex) {
+            _pageModel.onTabPageChanged(newIndex, _pageController);
+          },
+        ),
       ),
     );
   }
 
-  BottomNavigationBarItem _bottomNavigationBarItem(
-          MainPageModel provide, int tabIndex) =>
+  /// 不退出
+  Future<bool> _dialogExitApp(BuildContext context) async {
+    ///如果是 android 回到桌面
+    if (Platform.isAndroid) {
+      AndroidIntent intent = AndroidIntent(
+        action: 'android.intent.action.MAIN',
+        category: "android.intent.category.HOME",
+      );
+      await intent.launch();
+    }
+
+    return Future.value(false);
+  }
+
+  BottomNavigationBarItem _bottomNavigationBarItem(MainPageModel provide,
+      int tabIndex) =>
       BottomNavigationBarItem(
         icon: _getTabIcon(provide.currentPageIndex, tabIndex),
         title: _getTabTitle(provide.currentPageIndex, tabIndex),
@@ -96,7 +120,7 @@ class _MainPageState extends State<MainPage>
   Text _getTabTitle(int currentPageIndex, int tabIndex) {
     final String title = _bottomTabTitles[tabIndex];
     final Color textColor =
-        (currentPageIndex == tabIndex) ? Colors.white : colorSecondaryTextGray;
+    (currentPageIndex == tabIndex) ? Colors.white : colorSecondaryTextGray;
     return Text(title, style: TextStyle(fontSize: 14.0, color: textColor));
   }
 }

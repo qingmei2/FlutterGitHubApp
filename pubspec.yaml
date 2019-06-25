@@ -20,6 +20,8 @@ dependencies:
   shared_preferences: ^0.5.3
   json_annotation: ^2.4.0
 
+  android_intent: ^0.3.0
+
   # 时间戳转换
   common_utils: ^1.1.1
 
