@@ -41,7 +41,7 @@ class _MainProfilePageState extends State<MainProfilePage> with AutomaticKeepAli
               child: Image(
                 width: 70.0,
                 height: 70.0,
-                image: NetworkImage(_userModel.user.avatar_url),
+                image: NetworkImage(_userModel.user.avatarUrl),
               ),
             ),
             Container(

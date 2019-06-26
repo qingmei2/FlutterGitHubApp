@@ -3,7 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 part 'repo.g.dart';
 
 /// flutter packages pub run build_runner build
-///
 List<Repo> getRepoList(List<dynamic> list){
   List<Repo> result = [];
   list.forEach((item){
