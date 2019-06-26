@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rhine/common/constants/config.dart';
 import 'package:flutter_rhine/ui/login/login_page.dart';
 import 'package:flutter_rhine/ui/login/login_page_model.dart';
 import 'package:flutter_rhine/ui/main/main_page_model.dart';
@@ -10,7 +11,11 @@ import 'package:provider/provider.dart';
 import 'common/constants/colors.dart';
 import 'common/providers/global_user_model.dart';
 
+import 'package:flutter/foundation.dart';
+
 void main() {
+  debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
   var globalUserInfoModel = GlobalUserModel();
 
   var mainPageModel = MainPageModel();
@@ -36,6 +41,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter-Rhine',
       onGenerateRoute: Application.router.generator,
+      debugShowCheckedModeBanner: Config.DEBUG,
       theme: ThemeData(
         primaryColor: colorPrimary,
         primaryColorDark: colorPrimaryDark,
