@@ -27,7 +27,7 @@ class MainRepoPagedItem extends StatelessWidget {
               margin: EdgeInsets.only(top: 12.0),
               child: Divider(
                 height: 1.0,
-                color: Colors.grey,
+                color: colorDivider,
               ),
             )
           ],

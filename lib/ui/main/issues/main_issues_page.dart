@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/model/issue.dart';
 import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
+import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/ui/main/issues/main_issues_model.dart';
 import 'package:provider/provider.dart';
 
@@ -47,8 +48,8 @@ class _MainIssuesPageState extends State<MainIssuesPage>
       builder: (context, MainIssuesModel model, child) {
         final List<Issue> issues = model.issues;
         if (issues.isEmpty) {
-          return Container(
-            child: Text('Empty'),
+          return Center(
+            child: ProgressBar(visibility: _mainIssuesModel.isLoading ?? false),
           );
         }
         return Container(
@@ -57,7 +58,7 @@ class _MainIssuesPageState extends State<MainIssuesPage>
             child: ListView.builder(
                 itemCount: issues.length,
                 itemBuilder: (_, index) =>
-                    MainIssuesItem(_footerKey, issues[index])),
+                    MainIssuesItem(issue: issues[index])),
           ),
         );
       },

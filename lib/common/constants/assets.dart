@@ -23,6 +23,14 @@ const String reposFork = '${imageHost}ic_fork_unchecked.png';
 const String reposIssue = '${imageHost}ic_issue_gray.png';
 const String reposStar = '${imageHost}ic_star_unchecked.png';
 
+/// issuesPage
+const String issuesCommentNormal = '${imageHost}ic_issue_comment_normal.png';
+const String issuesCommentNormalDark = '${imageHost}ic_issue_comment_normal_dark.png';
+const String issuesCommentFire = '${imageHost}ic_issue_comment_fire.png';
+const String issuesCommentFireDark = '${imageHost}ic_issue_comment_fire_dark.png';
+const String issuesTag = '${imageHost}ic_issue_tag.png';
+const String issuesTime = '${imageHost}ic_issue_time.png';
+
 /// profilePage
 const String mineShared = '${imageHost}ic_open_in_new_white_24dp.png';
 const String mineLocationIcon = '${imageHost}ic_location_on_gray.png';

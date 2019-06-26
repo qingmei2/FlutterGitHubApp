@@ -16,20 +16,42 @@ class MainIssuesModel extends ChangeNotifier {
   String _sort = IssuesRepository.SORT_UPDATED;
 
   // 筛选状态，默认只显示打开的issue
-  String _state = IssuesRepository.STATE_OPEN;
+  String _state = IssuesRepository.STATE_ALL;
 
   // 加载框是否可见
   bool _isLoading;
 
+  bool get isLoading => _isLoading;
+
+  void updateProgressVisible(final bool visible) {
+    if (_isLoading != visible) {
+      _isLoading = visible;
+      notifyListeners();
+    }
+  }
+
+  void _onPagedLoadSuccess(final List<Issue> newIssues) {
+    _issues.addAll(newIssues);
+    _pagedIndex++;
+
+    notifyListeners();
+  }
+
   Future<DataResult> fetchIssues() async {
+    updateProgressVisible(true);
+
     final DataResult<List<Issue>> res = await IssuesRepository.fetchIssues(
         page: _pagedIndex + 1, sort: _sort, state: _state);
+
+    updateProgressVisible(false);
 
     print('fetchIssues result:' + res.data.toString());
 
     if (res.result) {
-      _issues.addAll(res.data);
-    } else {}
+      _onPagedLoadSuccess(res.data);
+    } else {
+      print('用户Issues加载失败...');
+    }
 
     return res;
   }

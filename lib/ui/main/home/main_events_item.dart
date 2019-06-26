@@ -85,7 +85,7 @@ class MainEventItem extends StatelessWidget {
             margin: EdgeInsets.only(left: 16.0, top: 12.0, right: 12.0),
             child: Divider(
               height: 1.0,
-              color: Colors.grey,
+              color: colorDivider,
             ),
           )
         ],
