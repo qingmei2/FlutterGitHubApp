@@ -15,7 +15,7 @@ class Api {
 
   /// [GET]用户仓库
   static String userRepos(final String username) =>
-      '$host/host/users/$username/repos';
+      '$host/users/$username/repos';
 
   /// [GET]用户issues
   static const String userIssues = '$host/issues';

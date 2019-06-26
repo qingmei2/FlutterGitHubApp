@@ -1,14 +1,15 @@
 import 'dart:io';
 
+import 'package:android_intent/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_page.dart';
+import 'package:flutter_rhine/ui/main/issues/main_issues_page.dart';
 import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:flutter_rhine/ui/main/mine/main_profile_page.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
 import 'package:provider/provider.dart';
-import 'package:android_intent/android_intent.dart';
 
 class MainPage extends StatefulWidget {
   static final String path = 'main_page';
@@ -31,12 +32,16 @@ class _MainPageState extends State<MainPage>
       Image.asset(mainNavReposPressed, width: 24.0, height: 24.0),
     ],
     [
+      Image.asset(mainNavIssueNormal, width: 24.0, height: 24.0),
+      Image.asset(mainNavIssuePressed, width: 24.0, height: 24.0),
+    ],
+    [
       Image.asset(mainNavProfileNormal, width: 24.0, height: 24.0),
       Image.asset(mainNavProfilePressed, width: 24.0, height: 24.0),
     ]
   ];
 
-  final List<String> _bottomTabTitles = ['home', 'repos', 'me'];
+  final List<String> _bottomTabTitles = ['home', 'repo', 'issue', 'me'];
 
   @override
   void initState() {
@@ -61,6 +66,7 @@ class _MainPageState extends State<MainPage>
           children: <Widget>[
             MainEventsPage(),
             MainReposPage(),
+            MainIssuesPage(),
             MainProfilePage()
           ],
           controller: _pageModel.pageController,
@@ -74,6 +80,8 @@ class _MainPageState extends State<MainPage>
             _bottomNavigationBarItem(
                 _pageModel, MainPageModel.TAB_INDEX_EVENTS),
             _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_REPOS),
+            _bottomNavigationBarItem(
+                _pageModel, MainPageModel.TAB_INDEX_ISSUES),
             _bottomNavigationBarItem(
                 _pageModel, MainPageModel.TAB_INDEX_PROFILE),
           ],
@@ -102,8 +110,8 @@ class _MainPageState extends State<MainPage>
     return Future.value(false);
   }
 
-  BottomNavigationBarItem _bottomNavigationBarItem(MainPageModel provide,
-      int tabIndex) =>
+  BottomNavigationBarItem _bottomNavigationBarItem(
+          MainPageModel provide, int tabIndex) =>
       BottomNavigationBarItem(
         icon: _getTabIcon(provide.currentPageIndex, tabIndex),
         title: _getTabTitle(provide.currentPageIndex, tabIndex),
@@ -117,7 +125,7 @@ class _MainPageState extends State<MainPage>
   Text _getTabTitle(int currentPageIndex, int tabIndex) {
     final String title = _bottomTabTitles[tabIndex];
     final Color textColor =
-    (currentPageIndex == tabIndex) ? Colors.white : colorSecondaryTextGray;
+        (currentPageIndex == tabIndex) ? Colors.white : colorSecondaryTextGray;
     return Text(title, style: TextStyle(fontSize: 14.0, color: textColor));
   }
 }
