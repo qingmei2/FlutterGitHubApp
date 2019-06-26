@@ -22,10 +22,12 @@ class MainIssuesItem extends StatelessWidget {
               direction: Axis.horizontal,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Image(
-                  width: 40.0,
-                  height: 40.0,
-                  image: NetworkImage(issue.assignee.avatarUrl),
+                ClipOval(
+                  child: Image(
+                    width: 40.0,
+                    height: 40.0,
+                    image: NetworkImage(issue.assignee.avatarUrl),
+                  ),
                 ),
                 Expanded(
                   flex: 1,
