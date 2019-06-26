@@ -10,12 +10,16 @@ class MainPageModel with ChangeNotifier {
 
   int get currentPageIndex => _currentPageIndex;
 
+  // 页面切换Controller
+  final PageController pageController = PageController();
+
   /// 更新选中的tab
-  void onTabPageChanged(int newIndex, PageController _pageController) {
+  /// [newIndex] 最新的pageIndex
+  void onTabPageChanged(int newIndex) {
     _verifyIndexLegal(newIndex);
     if (_currentPageIndex != newIndex) {
       _currentPageIndex = newIndex;
-      _pageController.jumpToPage(newIndex);
+      pageController.jumpToPage(newIndex);
       notifyListeners();
     }
   }

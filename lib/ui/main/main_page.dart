@@ -38,18 +38,15 @@ class _MainPageState extends State<MainPage>
 
   final List<String> _bottomTabTitles = ['home', 'repos', 'me'];
 
-  PageController _pageController;
-
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _pageController.dispose();
+    Provider.of<MainPageModel>(context).pageController.dispose();
   }
 
   @override
@@ -66,9 +63,9 @@ class _MainPageState extends State<MainPage>
             MainReposPage(),
             MainProfilePage()
           ],
-          controller: _pageController,
+          controller: _pageModel.pageController,
           onPageChanged: (index) {
-            _pageModel.onTabPageChanged(index, _pageController);
+            _pageModel.onTabPageChanged(index);
           },
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -84,7 +81,7 @@ class _MainPageState extends State<MainPage>
           iconSize: 24.0,
           type: BottomNavigationBarType.fixed,
           onTap: (newIndex) {
-            _pageModel.onTabPageChanged(newIndex, _pageController);
+            _pageModel.onTabPageChanged(newIndex);
           },
         ),
       ),
