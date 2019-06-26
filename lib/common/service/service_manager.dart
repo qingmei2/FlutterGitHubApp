@@ -33,8 +33,9 @@ class ServiceManager {
   ///[ params] 请求参数
   ///[ header] 外加头
   ///[ option] 配置
-  netFetch(url, params, Map<String, dynamic> header, Options option,
-      {noTip = false}) async {
+  netFetch(final url, final params, final Map<String, dynamic> header,
+      Options option,
+      {final bool noTip = false}) async {
     Map<String, dynamic> headers = new HashMap();
     if (header != null) {
       headers.addAll(header);
@@ -47,34 +48,36 @@ class ServiceManager {
       option.headers = headers;
     }
 
-    resultError(DioError e) {
-      Response errorResponse;
-      if (e.response != null) {
-        errorResponse = e.response;
-      } else {
-        errorResponse = new Response(statusCode: 666);
-      }
-      if (e.type == DioErrorType.CONNECT_TIMEOUT ||
-          e.type == DioErrorType.RECEIVE_TIMEOUT) {
-        errorResponse.statusCode = ApiCode.NETWORK_TIMEOUT;
-      }
-      return new ResultData(
-          ApiCode.errorHandleFunction(
-              errorResponse.statusCode, e.message, noTip),
-          false,
-          errorResponse.statusCode);
-    }
-
     Response response;
     try {
       response = await _dio.request(url, data: params, options: option);
     } on DioError catch (e) {
-      return resultError(e);
+      return _resultError(e, noTip);
     }
     if (response.data is DioError) {
-      return resultError(response.data);
+      return _resultError(response.data, noTip);
     }
     return response.data;
+  }
+
+  /// 生成请求失败对应的error
+  /// [e] 网络请求失败的error
+  /// [noTip]
+  _resultError(final DioError e, final bool noTip) {
+    Response errorResponse;
+    if (e.response != null) {
+      errorResponse = e.response;
+    } else {
+      errorResponse = new Response(statusCode: 666);
+    }
+    if (e.type == DioErrorType.CONNECT_TIMEOUT ||
+        e.type == DioErrorType.RECEIVE_TIMEOUT) {
+      errorResponse.statusCode = ApiCode.NETWORK_TIMEOUT;
+    }
+    return new ResultData(
+        ApiCode.errorHandleFunction(errorResponse.statusCode, e.message, noTip),
+        false,
+        errorResponse.statusCode);
   }
 
   ///清除授权

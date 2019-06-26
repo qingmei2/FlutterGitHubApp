@@ -8,7 +8,7 @@ import 'package:flutter_rhine/common/constants/ignore.dart';
 import 'package:flutter_rhine/common/model/user.dart';
 import 'package:flutter_rhine/common/providers/global_user_model.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
-import 'package:flutter_rhine/dao/dao_result.dart';
+import 'package:flutter_rhine/repository/dao_result.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
 
 class LoginPageModel with ChangeNotifier {

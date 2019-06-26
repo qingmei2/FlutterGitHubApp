@@ -3,7 +3,7 @@ import 'package:flutter_rhine/common/constants/api.dart';
 import 'package:flutter_rhine/common/constants/config.dart';
 import 'package:flutter_rhine/common/model/repo.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
-import 'package:flutter_rhine/dao/dao_result.dart';
+import 'package:flutter_rhine/repository/dao_result.dart';
 
 class MainRepoModel extends ChangeNotifier {
   // 事件列表
