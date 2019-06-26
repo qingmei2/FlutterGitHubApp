@@ -1,21 +1,24 @@
 import 'package:flutter_rhine/common/constants/config.dart';
 
 class Api {
-  static const String host = "https://api.github.com/";
+  static const String host = "https://api.github.com";
 
   /// [POST]用户鉴权
-  static const String authorization = "${host}authorizations";
+  static const String authorization = "$host/authorizations";
 
   /// [GET]我的用户信息
-  static const String userInfo = "${host}user";
+  static const String userInfo = "$host/user";
 
   /// [GET]用户事件
   static String userEvents(final String username) =>
-      "${host}users/$username/received_events";
+      "$host/users/$username/received_events";
 
   /// [GET]用户仓库
   static String userRepos(final String username) =>
-      '${host}users/$username/repos';
+      '$host/host/users/$username/repos';
+
+  /// [GET]用户issues
+  static const String userIssues = '$host/issues';
 
   /// 处理分页参数
   /// [tab]      分隔符
