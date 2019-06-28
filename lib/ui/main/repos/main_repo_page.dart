@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/model/repo.dart';
-import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/common/providers/auth_bloc.dart';
 import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_item.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
-import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/common/providers/auth_bloc.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/repository/dao_result.dart';
 import 'package:flutter_rhine/routers/application.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
-import 'package:flutter_rhine/common/providers/global_user_model.dart';
+import 'package:flutter_rhine/common/providers/auth_bloc.dart';
 import 'package:provider/provider.dart';
 
 class MainProfilePage extends StatefulWidget {

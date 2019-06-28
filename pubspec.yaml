@@ -14,7 +14,6 @@ dependencies:
   dio: ^2.0.7
   flutter_swiper: ^1.1.4
   flutter_easyrefresh: ^1.2.7
-  provider: ^3.0.0+1
   fluttertoast: ^3.0.1
   fluro: ^1.4.0
   shared_preferences: ^0.5.3
@@ -24,6 +23,10 @@ dependencies:
 
   # 时间戳转换
   common_utils: ^1.1.1
+  # Google官方推荐的状态管理组件
+  provider: ^3.0.0+1
+  # Bloc + RxDart
+  flutter_bloc: ^0.18.0
 
 dev_dependencies:
   build_runner: ^1.0.0

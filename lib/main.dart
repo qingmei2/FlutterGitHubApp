@@ -1,32 +1,24 @@
 import 'package:fluro/fluro.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rhine/common/constants/config.dart';
-import 'package:flutter_rhine/ui/login/login_page.dart';
-import 'package:flutter_rhine/ui/login/login_page_model.dart';
-import 'package:flutter_rhine/ui/main/main_page_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/routers/application.dart';
 import 'package:flutter_rhine/routers/routes.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_rhine/ui/login/login_page.dart';
 
-import 'common/constants/colors.dart';
-import 'common/providers/global_user_model.dart';
-
-import 'package:flutter/foundation.dart';
+import 'blocs/auth.dart';
+import 'blocs/auth_bloc.dart';
+import 'common/constants/constants.dart';
+import 'repository/repository.dart';
 
 void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-  var globalUserInfoModel = GlobalUserModel();
+  final userRepository = UserRepository();
 
-  var mainPageModel = MainPageModel();
-  var loginModel = LoginPageModel();
-
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider.value(value: globalUserInfoModel),
-      ChangeNotifierProvider.value(value: mainPageModel),
-      ChangeNotifierProvider.value(value: loginModel),
-    ],
+  runApp(BlocProvider<AuthenticationBloc>(
+    builder: (context) =>
+        AuthenticationBloc(userRepository)..dispatch(AppStart()),
     child: MyApp(),
   ));
 }

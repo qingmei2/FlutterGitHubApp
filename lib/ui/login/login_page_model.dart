@@ -6,7 +6,6 @@ import 'package:flutter_rhine/common/constants/api.dart';
 import 'package:flutter_rhine/common/constants/config.dart';
 import 'package:flutter_rhine/common/constants/ignore.dart';
 import 'package:flutter_rhine/common/model/user.dart';
-import 'package:flutter_rhine/common/providers/global_user_model.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
 import 'package:flutter_rhine/repository/dao_result.dart';
 import 'package:flutter_rhine/repository/sputils.dart';
@@ -53,7 +52,6 @@ class LoginPageModel with ChangeNotifier {
   /// [usernameController] 自动登录时会将上次登录的用户数据反映在ui上
   /// [passwordController] 同上
   /// [globalUserModel]    登录成功，将用户信息存储更新
-  ///
   Future<DataResult> tryAutoLogin(
     final TextEditingController usernameController,
     final TextEditingController passwordController,
@@ -140,7 +138,7 @@ class LoginPageModel with ChangeNotifier {
         // 存入持久层
         if (needDb) SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
         // 存入内存
-        globalUserModel.saveUserInfo(user);
+        globalUserModel.persistUserInfo(user);
         
         return DataResult(user, true);
       } else {
