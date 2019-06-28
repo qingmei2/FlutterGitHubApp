@@ -1,34 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/model/event.dart';
-import 'package:flutter_rhine/common/providers/auth_bloc.dart';
 import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
+import 'package:flutter_rhine/repository/repository.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_item.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class MainEventsPage extends StatefulWidget {
+  final UserRepository userRepository;
+
+  MainEventsPage({this.userRepository}) : assert(userRepository != null);
+
   @override
   State<StatefulWidget> createState() {
-    return _MainEventsPageState();
+    return _MainEventsPageState(userRepository);
   }
 }
 
 class _MainEventsPageState extends State<MainEventsPage>
     with AutomaticKeepAliveClientMixin {
+  final UserRepository userRepository;
+
+  _MainEventsPageState(this.userRepository);
+
   MainEventsModel _mainEventsModel = MainEventsModel();
-  GlobalUserModel _globalUserModel;
 
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _globalUserModel = Provider.of<GlobalUserModel>(context);
-
-    _mainEventsModel.fetchEvents(_globalUserModel.user.login);
+    _mainEventsModel.fetchEvents(userRepository.user.login);
   }
 
   @override
@@ -93,7 +98,7 @@ class _MainEventsPageState extends State<MainEventsPage>
       ),
       autoLoad: true,
       loadMore: () async {
-        await _mainEventsModel.fetchEvents(_globalUserModel.user.login);
+        await _mainEventsModel.fetchEvents(userRepository.user.login);
       },
     );
   }

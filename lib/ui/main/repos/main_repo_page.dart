@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/model/repo.dart';
-import 'package:flutter_rhine/common/providers/auth_bloc.dart';
 import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
+import 'package:flutter_rhine/repository/repository.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_item.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class MainReposPage extends StatefulWidget {
+  final UserRepository userRepository;
+
+  MainReposPage({this.userRepository}) : assert(userRepository != null);
+
   @override
   State<StatefulWidget> createState() {
-    return _MainReposPageState();
+    return _MainReposPageState(userRepository: userRepository);
   }
 }
 
-class _MainReposPageState extends State<MainReposPage> with AutomaticKeepAliveClientMixin {
-  GlobalUserModel _globalUserModel;
+class _MainReposPageState extends State<MainReposPage>
+    with AutomaticKeepAliveClientMixin {
+  final UserRepository userRepository;
+
+  _MainReposPageState({this.userRepository}) : assert(userRepository != null);
+
   MainRepoModel _mainRepoModel = MainRepoModel();
 
   final GlobalKey<RefreshFooterState> _footerKey =
@@ -26,8 +34,7 @@ class _MainReposPageState extends State<MainReposPage> with AutomaticKeepAliveCl
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _globalUserModel = Provider.of<GlobalUserModel>(context);
-    _mainRepoModel.fetchRepos(_globalUserModel.user.login);
+    _mainRepoModel.fetchRepos(userRepository.user.login);
   }
 
   @override
@@ -43,7 +50,7 @@ class _MainReposPageState extends State<MainReposPage> with AutomaticKeepAliveCl
             PopupMenuButton<String>(
               onSelected: (newValue) {
                 // 更新排序条件，刷新ui
-                _mainRepoModel.fetchRepos(_globalUserModel.user.login,
+                _mainRepoModel.fetchRepos(userRepository.user.login,
                     sort: newValue);
               },
               itemBuilder: (context) => <PopupMenuItem<String>>[
@@ -104,7 +111,7 @@ class _MainReposPageState extends State<MainReposPage> with AutomaticKeepAliveCl
       ),
       autoLoad: true,
       loadMore: () async {
-        await _mainRepoModel.fetchRepos(_globalUserModel.user.login);
+        await _mainRepoModel.fetchRepos(userRepository.user.login);
       },
     );
   }

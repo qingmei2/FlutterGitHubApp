@@ -3,7 +3,7 @@ import 'package:flutter_rhine/common/constants/api.dart';
 import 'package:flutter_rhine/common/constants/config.dart';
 import 'package:flutter_rhine/common/model/issue.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
-import 'package:flutter_rhine/repository/dao_result.dart';
+import 'package:flutter_rhine/repository/others/dao_result.dart';
 
 /// 用户issues相关
 class IssuesRepository {

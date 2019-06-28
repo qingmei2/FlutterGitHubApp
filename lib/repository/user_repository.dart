@@ -4,9 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_rhine/common/constants/constants.dart';
 import 'package:flutter_rhine/common/model/user.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
-import 'package:flutter_rhine/repository/sputils.dart';
+import 'package:flutter_rhine/repository/others/sputils.dart';
 
-import 'dao_result.dart';
+import 'package:flutter_rhine/repository/others/dao_result.dart';
 
 class UserRepository {
   /// 用户信息
@@ -20,7 +20,7 @@ class UserRepository {
   String get token => _token;
 
   /// 用户是否自动登录
-  Future<bool> isAutoLogin() async {
+  Future<bool> hasAutoLoginInfo() async {
     final String usernameTemp = await SpUtils.get(Config.USER_NAME_KEY) ?? '';
     final String passwordTemp = await SpUtils.get(Config.PW_KEY) ?? '';
 

@@ -14,7 +14,7 @@ class LoginNormal extends LoginState {
 }
 
 class LoginLoading extends LoginState {
-  LoginLoading(String username, String password)
+  LoginLoading({String username, String password})
       : super(username, password, true);
 }
 

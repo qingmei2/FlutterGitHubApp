@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/model/issue.dart';
-import 'package:flutter_rhine/repository/dao_result.dart';
+import 'package:flutter_rhine/repository/others/dao_result.dart';
 import 'package:flutter_rhine/repository/issues_repository.dart';
 
 class MainIssuesModel extends ChangeNotifier {

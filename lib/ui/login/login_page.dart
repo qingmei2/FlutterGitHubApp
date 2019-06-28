@@ -1,39 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
-import 'package:flutter_rhine/common/providers/auth_bloc.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
-import 'package:flutter_rhine/repository/dao_result.dart';
-import 'package:flutter_rhine/routers/application.dart';
-import 'package:flutter_rhine/ui/login/login_page_model.dart';
-import 'package:flutter_rhine/ui/main/main_page.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_rhine/repository/others/dao_result.dart';
+import 'package:flutter_rhine/repository/repository.dart';
 
-class LoginPage extends StatefulWidget {
+import 'login.dart';
+
+class LoginPage extends StatelessWidget {
   static final String path = 'login_page';
 
-  @override
-  State<StatefulWidget> createState() {
-    return LoginPageState();
-  }
-}
+  final UserRepository userRepository;
 
-class LoginPageState extends State<LoginPage> {
-  GlobalUserModel _globalUserModel;
+  LoginPage({Key key, @required this.userRepository})
+      : assert(userRepository != null),
+        super(key: key);
 
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // 初始化Provider
-    _globalUserModel = Provider.of<GlobalUserModel>(context);
-
-    // 尝试自动登录
-    _tryAutoLogin(_globalUserModel);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,31 +34,36 @@ class LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
-          child: Stack(
-            alignment: Alignment.center,
-            fit: StackFit.loose,
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    _loginTitle(),
-                    _usernameInput(context),
-                    _passwordInput(context),
-                    _signInButton(context)
-                  ],
+      body: BlocProvider(
+        builder: (context) => LoginBloc(userRepository),
+        child: Container(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.loose,
+              children: <Widget>[
+                SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      _loginTitle(),
+                      _usernameInput(context),
+                      _passwordInput(context),
+                      _signInButton(context)
+                    ],
+                  ),
                 ),
-              ),
-              Consumer<LoginPageModel>(
-                builder: (context, LoginPageModel _loginModel, child) =>
+                BlocListener<LoginEvent, LoginState>(
+                  bloc: BlocProvider.of<LoginBloc>(context),
+                  listener: (context, state) {
                     ProgressBar(
-                      visibility: _loginModel.progressVisible ?? false,
-                    ),
-              ),
-            ],
+                      visibility: state.isLoading,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -107,45 +97,54 @@ class LoginPageState extends State<LoginPage> {
 
   /// 用户名输入框
   Widget _usernameInput(BuildContext context) {
-    return Consumer<LoginPageModel>(
-      builder: (BuildContext context, LoginPageModel model, child) => Container(
-            margin: EdgeInsets.only(top: 24.0),
-            child: TextField(
-              controller: userNameController,
-              keyboardType: TextInputType.text,
-              onChanged: (String newValue) => model.onUserNameChanged(newValue),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                labelText: 'Username or email address',
-              ),
+    final bloc = BlocProvider.of<LoginBloc>(context);
+    final state = bloc.currentState;
+    userNameController.text = state.username;
+
+    return BlocListener<LoginEvent, LoginState>(
+      bloc: bloc,
+      listener: (context, state) {
+        return Container(
+          margin: EdgeInsets.only(top: 24.0),
+          child: TextField(
+            controller: userNameController,
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+              labelText: 'Username or email address',
             ),
           ),
+        );
+      },
     );
   }
 
   /// 密码输入框
   Widget _passwordInput(BuildContext context) {
-    return Consumer<LoginPageModel>(
-        builder: (context, LoginPageModel model, child) {
-      return Container(
-        margin: EdgeInsets.only(top: 8.0),
-        child: TextField(
-          controller: passwordController,
-          keyboardType: TextInputType.text,
-          obscureText: true,
-          // 输入密码模式
-          onChanged: (String newValue) => model.onPasswordChanged(newValue),
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-            labelText: 'Password',
+    final bloc = BlocProvider.of<LoginBloc>(context);
+    passwordController.text = bloc.currentState.password;
+    return BlocListener<LoginEvent, LoginState>(
+      bloc: bloc,
+      listener: (context, state) {
+        return Container(
+          margin: EdgeInsets.only(top: 8.0),
+          child: TextField(
+            controller: passwordController,
+            keyboardType: TextInputType.text,
+            obscureText: true,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+              labelText: 'Password',
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   /// 登录按钮
   Widget _signInButton(BuildContext context) {
+    final bloc = BlocProvider.of<LoginBloc>(context);
     return Container(
       alignment: Alignment.center,
       margin: EdgeInsets.only(top: 32.0),
@@ -156,7 +155,7 @@ class LoginPageState extends State<LoginPage> {
           minHeight: 50.0,
         ),
         child: FlatButton(
-          onPressed: () => _onLoginButtonClicked(),
+          onPressed: () => _onLoginButtonClicked(bloc),
           color: colorSecondaryDark,
           highlightColor: colorPrimary,
           shape: RoundedRectangleBorder(
@@ -175,19 +174,10 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  /// 尝试自动登录
-  void _tryAutoLogin(GlobalUserModel globalUserModel) {
-    Provider.of<LoginPageModel>(context)
-        .tryAutoLogin(userNameController, passwordController, globalUserModel)
-        .then((res) => _onLoginSuccess(res));
-  }
-
   /// 登录按钮点击事件
-  void _onLoginButtonClicked() {
-    final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
-
-    final String username = _loginModel.username;
-    final String password = _loginModel.password;
+  void _onLoginButtonClicked(LoginBloc bloc) {
+    final String username = userNameController.text;
+    final String password = passwordController.text;
 
     if (username == null || username.length == 0) {
       return;
@@ -196,24 +186,16 @@ class LoginPageState extends State<LoginPage> {
       return;
     }
 
-    _loginModel.login(_globalUserModel).then((res) => _onLoginSuccess(res));
+    bloc.dispatch(LoginClickedEvent(username: username, password: password));
   }
 
   /// 登录结果处理
   void _onLoginSuccess(DataResult res) {
-    final LoginPageModel _loginModel = Provider.of<LoginPageModel>(context);
-
-    if (res != null && res.result) {
-      // 清除登录信息
-      _loginModel.updateTextField("", userNameController);
-      _loginModel.updateTextField("", passwordController);
-      // 登录成功，跳转主页面
-      Future.delayed(const Duration(seconds: 1), () {
-        Navigator.pop(context);
-        Application.router.navigateTo(context, MainPage.path);
-        return true;
-      });
-    }
-    // 登录失败
+    // 登录成功，跳转主页面
+//    Future.delayed(const Duration(seconds: 1), () {
+//      Navigator.pop(context);
+//      Application.router.navigateTo(context, MainPage.path);
+//      return true;
+//    });
   }
 }
