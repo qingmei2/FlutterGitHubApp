@@ -46,7 +46,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   /// [password] 用户密码
   Stream<LoginState> _loginStateStream(
       final String username, final String password) async* {
-    yield _autoLoginLoadingState(username, password);
+//    yield _autoLoginLoadingState(username, password);
     final DataResult<User> loginResult =
         await userRepository.login(username, password);
 

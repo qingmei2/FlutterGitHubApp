@@ -14,16 +14,20 @@ import 'repository/repository.dart';
 void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-  final userRepository = UserRepository();
+  final UserRepository userRepository = UserRepository();
 
   runApp(BlocProvider<AuthenticationBloc>(
     builder: (context) =>
         AuthenticationBloc(userRepository)..dispatch(AppStart()),
-    child: MyApp(),
+    child: App(userRepository: userRepository),
   ));
 }
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
+  final UserRepository userRepository;
+
+  App({Key key, @required this.userRepository}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final router = Router();
@@ -39,7 +43,7 @@ class MyApp extends StatelessWidget {
         primaryColorDark: colorPrimaryDark,
         accentColor: colorAccent,
       ),
-      home: LoginPage(),
+      home: LoginPage(userRepository: userRepository),
     );
   }
 }

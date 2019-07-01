@@ -4,9 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_rhine/common/constants/constants.dart';
 import 'package:flutter_rhine/common/model/user.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
-import 'package:flutter_rhine/repository/others/sputils.dart';
-
 import 'package:flutter_rhine/repository/others/dao_result.dart';
+import 'package:flutter_rhine/repository/others/sputils.dart';
 
 class UserRepository {
   /// 用户信息
@@ -87,6 +86,7 @@ class UserRepository {
 
     DataResult<User> resultData;
     if (res != null && res.result) {
+      await SpUtils.save(Config.USER_NAME_KEY, username);
       await SpUtils.save(Config.PW_KEY, password);
       resultData = await getUserInfo(null);
 
