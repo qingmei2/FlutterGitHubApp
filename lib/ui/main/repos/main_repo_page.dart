@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class MainReposPage extends StatefulWidget {
   final UserRepository userRepository;
 
-  MainReposPage({this.userRepository}) : assert(userRepository != null);
+  MainReposPage({@required this.userRepository}) : assert(userRepository != null);
 
   @override
   State<StatefulWidget> createState() {

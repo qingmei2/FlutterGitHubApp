@@ -31,7 +31,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final router = Router();
-    Routes.configureRoutes(router);
+    Routes.configureRoutes(router, userRepository);
     Application.router = router;
 
     return MaterialApp(

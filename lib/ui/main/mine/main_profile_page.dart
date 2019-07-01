@@ -6,7 +6,7 @@ import 'package:flutter_rhine/repository/repository.dart';
 class MainProfilePage extends StatefulWidget {
   final UserRepository userRepository;
 
-  MainProfilePage({this.userRepository}) : assert(userRepository != null);
+  MainProfilePage({@required this.userRepository}) : assert(userRepository != null);
 
   @override
   State<StatefulWidget> createState() =>

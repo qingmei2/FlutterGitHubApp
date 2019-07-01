@@ -2,26 +2,38 @@ import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
+import 'package:flutter_rhine/repository/repository.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_page.dart';
 import 'package:flutter_rhine/ui/main/issues/main_issues_page.dart';
-import 'package:flutter_rhine/ui/main/main_page_model.dart';
 import 'package:flutter_rhine/ui/main/mine/main_profile_page.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
-import 'package:provider/provider.dart';
+
+import 'main.dart';
 
 class MainPage extends StatefulWidget {
   static final String path = 'main_page';
 
+  final UserRepository userRepository;
+
+  MainPage({Key key, @required this.userRepository}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
-    return _MainPageState();
+    return _MainPageState(userRepository: userRepository);
   }
 }
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
+  final UserRepository userRepository;
+
+  final _pageController = PageController();
+
+  _MainPageState({@required this.userRepository});
+
   final List<List<Image>> _bottomTabIcons = [
     [
       Image.asset(mainNavEventsNormal, width: 24.0, height: 24.0),
@@ -44,53 +56,64 @@ class _MainPageState extends State<MainPage>
   final List<String> _bottomTabTitles = ['home', 'repos', 'issues', 'me'];
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     super.dispose();
-    Provider.of<MainPageModel>(context).pageController.dispose();
+    _pageController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final MainPageModel _pageModel = Provider.of<MainPageModel>(context);
-    return WillPopScope(
-      onWillPop: () {
-        return _dialogExitApp(context);
-      },
-      child: Scaffold(
-        body: PageView(
-          children: <Widget>[
-            MainEventsPage(),
-            MainReposPage(),
-            MainIssuesPage(),
-            MainProfilePage()
-          ],
-          controller: _pageModel.pageController,
-          onPageChanged: (index) {
-            _pageModel.onTabPageChanged(index);
+    final MainPageBloc mainBloc = MainPageBloc();
+    return BlocProvider(
+      builder: (_) => mainBloc,
+      child: WillPopScope(
+        onWillPop: () {
+          return _dialogExitApp(context);
+        },
+        child: BlocListener<MainPageEvent, MainPageState>(
+          bloc: mainBloc,
+          listener: (_, state) {
+            final int currentPosition = _pageController.page.toInt();
+            final int newPosition = state.currentPageIndex;
+            if (currentPosition != newPosition)
+              _pageController.jumpToPage(newPosition);
           },
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: colorPrimary,
-          items: <BottomNavigationBarItem>[
-            _bottomNavigationBarItem(
-                _pageModel, MainPageModel.TAB_INDEX_EVENTS),
-            _bottomNavigationBarItem(_pageModel, MainPageModel.TAB_INDEX_REPOS),
-            _bottomNavigationBarItem(
-                _pageModel, MainPageModel.TAB_INDEX_ISSUES),
-            _bottomNavigationBarItem(
-                _pageModel, MainPageModel.TAB_INDEX_PROFILE),
-          ],
-          currentIndex: _pageModel.currentPageIndex,
-          iconSize: 24.0,
-          type: BottomNavigationBarType.fixed,
-          onTap: (newIndex) {
-            _pageModel.onTabPageChanged(newIndex);
-          },
+          child: BlocBuilder<MainPageEvent, MainPageState>(
+            bloc: mainBloc,
+            builder: (_, state) => Scaffold(
+                  body: PageView(
+                    children: <Widget>[
+                      MainEventsPage(userRepository: userRepository),
+                      MainReposPage(userRepository: userRepository),
+                      MainIssuesPage(),
+                      MainProfilePage(userRepository: userRepository)
+                    ],
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      mainBloc.dispatch(MainSwipeViewPagerEvent(index));
+                    },
+                  ),
+                  bottomNavigationBar: BottomNavigationBar(
+                    backgroundColor: colorPrimary,
+                    items: <BottomNavigationBarItem>[
+                      _bottomNavigationBarItem(
+                          state, MainPageState.TAB_INDEX_EVENTS),
+                      _bottomNavigationBarItem(
+                          state, MainPageState.TAB_INDEX_REPOS),
+                      _bottomNavigationBarItem(
+                          state, MainPageState.TAB_INDEX_ISSUES),
+                      _bottomNavigationBarItem(
+                          state, MainPageState.TAB_INDEX_PROFILE),
+                    ],
+                    currentIndex: state.currentPageIndex,
+                    iconSize: 24.0,
+                    type: BottomNavigationBarType.fixed,
+                    onTap: (newIndex) {
+                      mainBloc.dispatch(MainChoiceBottomTabEvent(newIndex));
+                    },
+                  ),
+                ),
+          ),
         ),
       ),
     );
@@ -111,11 +134,12 @@ class _MainPageState extends State<MainPage>
   }
 
   BottomNavigationBarItem _bottomNavigationBarItem(
-          MainPageModel provide, int tabIndex) =>
-      BottomNavigationBarItem(
-        icon: _getTabIcon(provide.currentPageIndex, tabIndex),
-        title: _getTabTitle(provide.currentPageIndex, tabIndex),
-      );
+      MainPageState state, int tabIndex) {
+    return BottomNavigationBarItem(
+      icon: _getTabIcon(state.currentPageIndex, tabIndex),
+      title: _getTabTitle(state.currentPageIndex, tabIndex),
+    );
+  }
 
   Image _getTabIcon(int currentPageIndex, int tabIndex) =>
       (currentPageIndex == tabIndex)

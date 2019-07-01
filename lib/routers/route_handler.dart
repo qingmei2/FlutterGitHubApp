@@ -1,11 +1,16 @@
 import 'package:fluro/fluro.dart';
-import 'package:flutter_rhine/ui/main/main_page.dart';
+import 'package:flutter_rhine/repository/repository.dart';
 import 'package:flutter_rhine/ui/login/login_page.dart';
+import 'package:flutter_rhine/ui/main/main_page.dart';
 
-final Handler loginHandler = Handler(
-  handlerFunc: (context, params) => LoginPage(),
-);
+Handler fetchLoginHandler(UserRepository userRepository) {
+  return Handler(
+    handlerFunc: (context, params) => LoginPage(userRepository: userRepository),
+  );
+}
 
-final Handler mainHandler = Handler(
-  handlerFunc: (context, params) => MainPage(),
-);
+Handler fetchMainHandler(UserRepository userRepository) {
+  return Handler(
+    handlerFunc: (context, params) => MainPage(userRepository: userRepository),
+  );
+}
