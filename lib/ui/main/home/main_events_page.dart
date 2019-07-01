@@ -1,65 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/model/event.dart';
 import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/repository/repository.dart';
 import 'package:flutter_rhine/ui/main/home/main_events_item.dart';
-import 'package:flutter_rhine/ui/main/home/main_events_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 
-class MainEventsPage extends StatefulWidget {
+import 'main_events.dart';
+
+class MainEventsPage extends StatelessWidget {
   final UserRepository userRepository;
+  final MainEventsBloc _mainEventsBloc = MainEventsBloc();
 
-  MainEventsPage({@required this.userRepository}) : assert(userRepository != null);
+  MainEventsPage({@required this.userRepository})
+      : assert(userRepository != null);
 
   @override
-  State<StatefulWidget> createState() {
-    return _MainEventsPageState(userRepository);
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+        automaticallyImplyLeading: false, // 隐藏返回键
+      ),
+      body: BlocProvider(
+        builder: (_) => _mainEventsBloc,
+        child: MainEventForm(
+          userRepository: userRepository,
+        ),
+      ),
+    );
   }
 }
 
-class _MainEventsPageState extends State<MainEventsPage>
+class MainEventForm extends StatefulWidget {
+  final UserRepository userRepository;
+
+  MainEventForm({@required this.userRepository})
+      : assert(userRepository != null);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MainEventsFormState(userRepository);
+  }
+}
+
+class _MainEventsFormState extends State<MainEventForm>
     with AutomaticKeepAliveClientMixin {
   final UserRepository userRepository;
 
-  _MainEventsPageState(this.userRepository);
-
-  MainEventsModel _mainEventsModel = MainEventsModel();
+  _MainEventsFormState(this.userRepository);
 
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _mainEventsModel.fetchEvents(userRepository.user.login);
+    BlocProvider.of<MainEventsBloc>(context)
+        .dispatch(MainEventsInitialEvent(username: userRepository.user.login));
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ChangeNotifierProvider.value(
-      value: _mainEventsModel,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-          automaticallyImplyLeading: false, // 隐藏返回键
-        ),
-        body: _eventList(),
-      ),
+    final bloc = BlocProvider.of<MainEventsBloc>(context);
+    return BlocListener<MainEventsEvent, MainEventsState>(
+      bloc: bloc,
+      listener: (context, MainEventsState state) {},
+      child: _eventList(),
     );
   }
 
   /// 渲染列表
   Widget _eventList() {
-    return Consumer<MainEventsModel>(
-      builder: (context, MainEventsModel model, child) {
-        if (model.eventPagedList.length > 0) {
-          return _initExistDataList(model.eventPagedList);
-        } else {
+    final bloc = BlocProvider.of<MainEventsBloc>(context);
+    return BlocBuilder(
+      bloc: bloc,
+      builder: (context, state) {
+        if (state is MainEventsFirstLoading) {
           return Center(
-            child: ProgressBar(visibility: _mainEventsModel.isLoading ?? false),
+            child: ProgressBar(visibility: true),
+          );
+        }
+
+        if (state is MainEventsPageLoadSuccess) {
+          return _initExistDataList(state.events);
+        }
+
+        if (state is MainEventPageLoadFailure) {
+          return _initExistDataList(state.events);
+        }
+
+        if (state is MainEventsEmptyState) {
+          return Center(
+            child: Text('Empty Page.'),
           );
         }
       },
@@ -98,7 +134,8 @@ class _MainEventsPageState extends State<MainEventsPage>
       ),
       autoLoad: true,
       loadMore: () async {
-        await _mainEventsModel.fetchEvents(userRepository.user.login);
+        BlocProvider.of<MainEventsBloc>(context).dispatch(
+            MainEventLoadNextPageEvent(username: userRepository.user.login));
       },
     );
   }

@@ -15,7 +15,7 @@ Event _$EventFromJson(Map<String, dynamic> json) {
           : Actor.fromJson(json['actor'] as Map<String, dynamic>),
       json['repo'] == null
           ? null
-          : Repo.fromJson(json['repo'] as Map<String, dynamic>),
+          : EventRepo.fromJson(json['repo'] as Map<String, dynamic>),
       json['payload'] == null
           ? null
           : Payload.fromJson(json['payload'] as Map<String, dynamic>),
@@ -52,11 +52,11 @@ Map<String, dynamic> _$ActorToJson(Actor instance) => <String, dynamic>{
       'avatar_url': instance.avatarUrl
     };
 
-Repo _$RepoFromJson(Map<String, dynamic> json) {
-  return Repo(json['id'] as int, json['name'] as String, json['url'] as String);
+EventRepo _$RepoFromJson(Map<String, dynamic> json) {
+  return EventRepo(json['id'] as int, json['name'] as String, json['url'] as String);
 }
 
-Map<String, dynamic> _$RepoToJson(Repo instance) => <String, dynamic>{
+Map<String, dynamic> _$RepoToJson(EventRepo instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'url': instance.url

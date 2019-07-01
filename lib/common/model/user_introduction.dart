@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user_Introduction.g.dart';
+part 'user_introduction.g.dart';
 
 /// 用户的简单信息
 /// 该Model类用于其他接口中返回的某个属性的复用

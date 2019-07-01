@@ -22,7 +22,7 @@ class Event extends Object {
   Actor actor;
 
   @JsonKey(name: 'repo')
-  Repo repo;
+  EventRepo repo;
 
   @JsonKey(name: 'payload')
   Payload payload;
@@ -85,7 +85,7 @@ class Actor extends Object {
 }
 
 @JsonSerializable()
-class Repo extends Object {
+class EventRepo extends Object {
   @JsonKey(name: 'id')
   int id;
 
@@ -95,13 +95,13 @@ class Repo extends Object {
   @JsonKey(name: 'url')
   String url;
 
-  Repo(
+  EventRepo(
     this.id,
     this.name,
     this.url,
   );
 
-  factory Repo.fromJson(Map<String, dynamic> srcJson) =>
+  factory EventRepo.fromJson(Map<String, dynamic> srcJson) =>
       _$RepoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RepoToJson(this);

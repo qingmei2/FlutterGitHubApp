@@ -1,4 +1,4 @@
-import 'package:flutter_rhine/common/model/user_Introduction.dart';
+import 'package:flutter_rhine/common/model/user_introduction.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'issue.g.dart';

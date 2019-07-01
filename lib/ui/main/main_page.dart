@@ -31,6 +31,7 @@ class _MainPageState extends State<MainPage>
   final UserRepository userRepository;
 
   final _pageController = PageController();
+  final MainPageBloc mainBloc = MainPageBloc();
 
   _MainPageState({@required this.userRepository});
 
@@ -63,7 +64,6 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    final MainPageBloc mainBloc = MainPageBloc();
     return BlocProvider(
       builder: (_) => mainBloc,
       child: WillPopScope(
