@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/common/constants/constants.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
+import 'package:flutter_rhine/routers/application.dart';
+import 'package:flutter_rhine/ui/main/main_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'login.dart';
 import 'login_bloc.dart';
@@ -16,40 +19,69 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController passwordController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context)
-      ..dispatch(InitialEvent(shouldAutoLogin: true));
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    BlocProvider.of<LoginBloc>(context)
+        .dispatch(InitialEvent(shouldAutoLogin: true));
+  }
 
-    return Container(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
-        child: Stack(
-          alignment: Alignment.center,
-          fit: StackFit.loose,
-          children: <Widget>[
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  _loginTitle(),
-                  _usernameInput(),
-                  _passwordInput(),
-                  _signInButton()
-                ],
+  @override
+  Widget build(BuildContext context) {
+    final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context);
+    return BlocListener<LoginEvent, LoginState>(
+      bloc: loginBloc,
+      listener: (context, LoginState state) {
+        print('接收到new State: ${state.toString()}');
+        if (state is LoginFailure) {
+          Fluttertoast.showToast(msg: state.errorMessage);
+        }
+        if (state is LoginSuccess) {
+          _onLoginSuccess(context);
+        }
+        userNameController.text = state.username;
+        passwordController.text = state.password;
+      },
+      child: Container(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
+          child: Stack(
+            alignment: Alignment.center,
+            fit: StackFit.loose,
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    _loginTitle(),
+                    _usernameInput(),
+                    _passwordInput(),
+                    _signInButton()
+                  ],
+                ),
               ),
-            ),
-            BlocBuilder<LoginEvent, LoginState>(
-              bloc: loginBloc,
-              builder: (context, state) {
-                return ProgressBar(
-                  visibility: state.isLoading,
-                );
-              },
-            ),
-          ],
+              BlocBuilder<LoginEvent, LoginState>(
+                bloc: loginBloc,
+                builder: (context, state) {
+                  return ProgressBar(
+                    visibility: state.isLoading,
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  /// 登录结果处理
+  void _onLoginSuccess(BuildContext context) {
+    Fluttertoast.showToast(msg: '登录成功，即将跳转主页面');
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pop(context);
+      Application.router.navigateTo(context, MainPage.path);
+      return true;
+    });
   }
 
   /// 顶部图标和标题
