@@ -102,9 +102,9 @@ class EventRepo extends Object {
   );
 
   factory EventRepo.fromJson(Map<String, dynamic> srcJson) =>
-      _$RepoFromJson(srcJson);
+      _$EventRepoFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$RepoToJson(this);
+  Map<String, dynamic> toJson() => _$EventRepoToJson(this);
 }
 
 @JsonSerializable()

@@ -52,11 +52,12 @@ Map<String, dynamic> _$ActorToJson(Actor instance) => <String, dynamic>{
       'avatar_url': instance.avatarUrl
     };
 
-EventRepo _$RepoFromJson(Map<String, dynamic> json) {
-  return EventRepo(json['id'] as int, json['name'] as String, json['url'] as String);
+EventRepo _$EventRepoFromJson(Map<String, dynamic> json) {
+  return EventRepo(
+      json['id'] as int, json['name'] as String, json['url'] as String);
 }
 
-Map<String, dynamic> _$RepoToJson(EventRepo instance) => <String, dynamic>{
+Map<String, dynamic> _$EventRepoToJson(EventRepo instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'url': instance.url
