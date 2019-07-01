@@ -1,23 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
 import 'package:flutter_rhine/repository/repository.dart';
 
-class MainProfilePage extends StatefulWidget {
+import 'main_profile.dart';
+
+class MainProfilePage extends StatelessWidget {
+  final UserRepository userRepository;
+  final MainProfileBloc _profileBloc = MainProfileBloc();
+
+  MainProfilePage({@required this.userRepository})
+      : assert(userRepository != null);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => _profileBloc,
+      child: MainProfileForm(
+        userRepository: userRepository,
+      ),
+    );
+  }
+}
+
+class MainProfileForm extends StatefulWidget {
   final UserRepository userRepository;
 
-  MainProfilePage({@required this.userRepository}) : assert(userRepository != null);
+  MainProfileForm({@required this.userRepository})
+      : assert(userRepository != null);
 
   @override
   State<StatefulWidget> createState() =>
-      _MainProfilePageState(userRepository: userRepository);
+      _MainProfileFormState(userRepository: userRepository);
 }
 
-class _MainProfilePageState extends State<MainProfilePage>
+class _MainProfileFormState extends State<MainProfileForm>
     with AutomaticKeepAliveClientMixin {
   final UserRepository userRepository;
 
-  _MainProfilePageState({this.userRepository}) : assert(userRepository != null);
+  _MainProfileFormState({this.userRepository}) : assert(userRepository != null);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    BlocProvider.of<MainProfileBloc>(context)
+        .dispatch(MainProfileInitialEvent(userRepository.user));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +61,29 @@ class _MainProfilePageState extends State<MainProfilePage>
         textDirection: TextDirection.ltr,
         fit: StackFit.loose,
         children: <Widget>[
-          _userInfoLayer(),
+          BlocBuilder(
+            bloc: BlocProvider.of<MainProfileBloc>(context),
+            builder: (context, MainProfileState state) {
+              return MainProfileUserInfoLayer(state.user);
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _userInfoLayer() {
+  @override
+  bool get wantKeepAlive => true;
+}
+
+/// 用户信息层
+class MainProfileUserInfoLayer extends StatelessWidget {
+  final User user;
+
+  MainProfileUserInfoLayer(this.user);
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -48,14 +94,14 @@ class _MainProfilePageState extends State<MainProfilePage>
           child: Image(
             width: 70.0,
             height: 70.0,
-            image: NetworkImage(userRepository.user.avatarUrl),
+            image: NetworkImage(user?.avatarUrl ?? ''),
           ),
         ),
         Container(
           margin: EdgeInsets.only(top: 30.0),
           padding: EdgeInsets.only(left: 20.0, right: 20.0),
           child: Text(
-            userRepository.user.login ?? "unknown",
+            user?.login ?? "unknown",
             style: TextStyle(
               fontSize: 16.0,
               color: Colors.white,
@@ -67,7 +113,7 @@ class _MainProfilePageState extends State<MainProfilePage>
           margin: EdgeInsets.only(top: 20.0),
           padding: EdgeInsets.only(left: 20.0, right: 20.0),
           child: Text(
-            userRepository.user.bio ?? "no description.",
+            user?.bio ?? "no description.",
             style: TextStyle(
               fontSize: 14.0,
               color: colorSecondaryTextGray,
@@ -88,7 +134,7 @@ class _MainProfilePageState extends State<MainProfilePage>
                 image: AssetImage(mineLocationIcon),
               ),
               Text(
-                userRepository.user.location ?? 'no address.',
+                user?.location ?? 'no address.',
                 style: TextStyle(
                   fontSize: 14.0,
                   color: colorSecondaryTextGray,
@@ -100,7 +146,4 @@ class _MainProfilePageState extends State<MainProfilePage>
       ],
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
