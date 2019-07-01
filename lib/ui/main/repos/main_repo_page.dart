@@ -1,32 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/model/repo.dart';
 import 'package:flutter_rhine/common/widget/global_hide_footer.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
 import 'package:flutter_rhine/repository/repository.dart';
 import 'package:flutter_rhine/ui/main/repos/main_repo_item.dart';
-import 'package:flutter_rhine/ui/main/repos/main_repo_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 
-class MainReposPage extends StatefulWidget {
+import 'main_repo.dart';
+
+class MainReposPage extends StatelessWidget {
   final UserRepository userRepository;
+  final MainReposBloc _mainReposBloc = MainReposBloc();
 
-  MainReposPage({@required this.userRepository}) : assert(userRepository != null);
+  MainReposPage({@required this.userRepository})
+      : assert(userRepository != null);
 
   @override
-  State<StatefulWidget> createState() {
-    return _MainReposPageState(userRepository: userRepository);
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      builder: (_) => _mainReposBloc,
+      child: MainReposForm(userRepository: userRepository),
+    );
   }
 }
 
-class _MainReposPageState extends State<MainReposPage>
+class MainReposForm extends StatefulWidget {
+  final UserRepository userRepository;
+
+  MainReposForm({@required this.userRepository})
+      : assert(userRepository != null);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MainReposFormState(userRepository: userRepository);
+  }
+}
+
+class _MainReposFormState extends State<MainReposForm>
     with AutomaticKeepAliveClientMixin {
   final UserRepository userRepository;
 
-  _MainReposPageState({this.userRepository}) : assert(userRepository != null);
-
-  MainRepoModel _mainRepoModel = MainRepoModel();
+  _MainReposFormState({this.userRepository}) : assert(userRepository != null);
 
   final GlobalKey<RefreshFooterState> _footerKey =
       GlobalKey<RefreshFooterState>();
@@ -34,56 +50,74 @@ class _MainReposPageState extends State<MainReposPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _mainRepoModel.fetchRepos(userRepository.user.login);
+    BlocProvider.of<MainReposBloc>(context)
+        .dispatch(MainReposInitialEvent(username: userRepository.user.login));
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ChangeNotifierProvider.value(
-      value: _mainRepoModel,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Repos'),
-          automaticallyImplyLeading: false,
-          actions: <Widget>[
-            PopupMenuButton<String>(
-              onSelected: (newValue) {
-                // 更新排序条件，刷新ui
-                _mainRepoModel.fetchRepos(userRepository.user.login,
-                    sort: newValue);
-              },
-              itemBuilder: (context) => <PopupMenuItem<String>>[
-                    PopupMenuItem(
-                      value: 'updated',
-                      child: Text('Sort by Update'),
-                    ),
-                    PopupMenuItem(
-                      value: 'created',
-                      child: Text('Sort by Created'),
-                    ),
-                    PopupMenuItem(
-                      value: 'full_name',
-                      child: Text('Sort by FullName'),
-                    ),
-                  ],
-            ),
-          ],
-        ),
-        body: _repoList(),
-      ),
+    final MainReposBloc bloc = BlocProvider.of<MainReposBloc>(context);
+    return BlocBuilder(
+      bloc: bloc,
+      builder: (context, MainReposState state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Repos'),
+            automaticallyImplyLeading: false,
+            actions: <Widget>[
+              PopupMenuButton<String>(
+                onSelected: (newValue) {
+                  // 更新排序条件，刷新ui
+                  bloc.dispatch(MainReposChangeFilterEvent(
+                    username: userRepository.user.login,
+                    sortType: newValue,
+                  ));
+                },
+                itemBuilder: (context) => <PopupMenuItem<String>>[
+                      PopupMenuItem(
+                        value: UserRepoRepository.SORT_UPDATED,
+                        child: Text('Sort by Update'),
+                      ),
+                      PopupMenuItem(
+                        value: UserRepoRepository.SORT_CREATED,
+                        child: Text('Sort by Created'),
+                      ),
+                      PopupMenuItem(
+                        value: UserRepoRepository.SORT_LETTER,
+                        child: Text('Sort by FullName'),
+                      ),
+                    ],
+              ),
+            ],
+          ),
+          body: _repoList(),
+        );
+      },
     );
   }
 
   Widget _repoList() {
-    return Consumer<MainRepoModel>(
-      builder: (context, MainRepoModel model, child) {
-        if (model.repoPagedList.length > 0) {
-          return _initExistDataList(model.repoPagedList);
-        } else {
+    final MainReposBloc bloc = BlocProvider.of<MainReposBloc>(context);
+
+    return BlocBuilder<MainReposEvent, MainReposState>(
+      bloc: bloc,
+      builder: (context, MainReposState state) {
+        if (state is MainReposFirstLoading) {
           return Center(
-            child: ProgressBar(visibility: _mainRepoModel.isLoading ?? false),
+            child: ProgressBar(visibility: true),
           );
+        }
+
+        if (state is MainReposEmptyState) {
+          return Center(
+            child: Text('Empty page.'),
+          );
+        }
+
+        if (state is MainReposPageLoadSuccess ||
+            state is MainReposPageLoadFailure) {
+          return _initExistDataList(state.repos);
         }
       },
     );
@@ -92,6 +126,7 @@ class _MainReposPageState extends State<MainReposPage>
   /// 有数据时的列表
   /// [renders] 事件列表
   Widget _initExistDataList(final List<Repo> renders) {
+    final MainReposBloc bloc = BlocProvider.of<MainReposBloc>(context);
     return EasyRefresh(
       refreshFooter: GlobalHideFooter(_footerKey),
       child: ListView.builder(
@@ -111,7 +146,8 @@ class _MainReposPageState extends State<MainReposPage>
       ),
       autoLoad: true,
       loadMore: () async {
-        await _mainRepoModel.fetchRepos(userRepository.user.login);
+        bloc.dispatch(
+            MainReposLoadNextPageEvent(username: userRepository.user.login));
       },
     );
   }

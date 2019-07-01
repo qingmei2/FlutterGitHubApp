@@ -25,6 +25,8 @@ class UserEventRepository {
         print(resultData.data);
         print(res.data.toString());
       }
+    } else {
+      resultData = DataResult.failure();
     }
 
     return resultData;
