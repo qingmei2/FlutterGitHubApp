@@ -14,8 +14,6 @@ import 'package:flutter_rhine/ui/main/repos/main_repo_page.dart';
 import 'main.dart';
 
 class MainPage extends StatefulWidget {
-  static final String path = 'main_page';
-
   final UserRepository userRepository;
 
   MainPage({Key key, @required this.userRepository}) : super(key: key);

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/common/constants/constants.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
-import 'package:flutter_rhine/routers/application.dart';
-import 'package:flutter_rhine/ui/main/main_page.dart';
+import 'package:flutter_rhine/routers/routes.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'login.dart';
@@ -79,7 +78,7 @@ class _LoginFormState extends State<LoginForm> {
     Fluttertoast.showToast(msg: '登录成功，即将跳转主页面');
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
-      Application.router.navigateTo(context, MainPage.path);
+      Navigator.pushNamed(context, AppRoutes.main);
       return true;
     });
   }

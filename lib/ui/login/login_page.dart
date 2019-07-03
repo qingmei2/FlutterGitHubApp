@@ -6,8 +6,6 @@ import 'login.dart';
 import 'login_form.dart';
 
 class LoginPage extends StatelessWidget {
-  static final String path = 'login_page';
-
   final UserRepository userRepository;
 
   LoginPage({Key key, @required this.userRepository})
