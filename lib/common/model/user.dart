@@ -14,6 +14,9 @@ class User extends Object {
   @JsonKey(name: 'node_id')
   String nodeId;
 
+  @JsonKey(name: 'token')
+  String token;
+
   @JsonKey(name: 'avatar_url')
   String avatarUrl;
 

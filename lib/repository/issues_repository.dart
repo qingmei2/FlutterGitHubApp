@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_rhine/common/constants/api.dart';
-import 'package:flutter_rhine/common/constants/config.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/model/issue.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
 import 'package:flutter_rhine/repository/others/dao_result.dart';
@@ -32,7 +30,7 @@ class IssuesRepository {
 
     final String url = Api.userIssues +
         Api.getPageParams('?', page, perPage) +
-        '&sort=$sort&state=$state';
+        '&sort=$sort&common.state=$state';
 
     var res = await serviceManager.netFetch(url, null, null, null);
     if (res != null && res.result) {
@@ -56,7 +54,7 @@ class IssuesRepository {
     }
     if (![STATE_OPEN, STATE_CLOSED, STATE_ALL].contains(state)) {
       throw Exception(
-          '错误的 state 参数，请使用SORT_CREATED、SORT_UPDATED、SORT_COMMENTS');
+          '错误的 common.state 参数，请使用SORT_CREATED、SORT_UPDATED、SORT_COMMENTS');
     }
   }
 }

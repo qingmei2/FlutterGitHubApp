@@ -1,31 +1,42 @@
-abstract class LoginState {
+import 'package:flutter_rhine/common/common.dart';
+
+@immutable
+class LoginState {
   final String username;
   final String password;
   final bool isLoading;
 
-  LoginState(this.username, this.password, this.isLoading);
+  final bool isLoginSuccess;
+  final bool isLoginCancel;
 
-  static LoginState initial() => LoginNormal(username: '', password: '');
-}
+  LoginState({
+    this.username,
+    this.password,
+    this.isLoading,
+    this.isLoginCancel,
+    this.isLoginSuccess,
+  });
 
-class LoginNormal extends LoginState {
-  LoginNormal({String username, String password})
-      : super(username, password, false);
-}
+  LoginState copyWith({
+    String username,
+    String password,
+    bool isLoading,
+    bool isLoginSuccess,
+    bool isLoginCancel,
+  }) {
+    return LoginState(
+        username: username ?? this.username,
+        password: password ?? this.password,
+        isLoading: isLoading ?? this.isLoading,
+        isLoginCancel: isLoginCancel ?? this.isLoginCancel,
+        isLoginSuccess: isLoginSuccess ?? this.isLoginSuccess);
+  }
 
-class LoginLoading extends LoginState {
-  LoginLoading({String username, String password})
-      : super(username, password, true);
-}
+  factory LoginState.initial() =>
+      LoginState(username: '', password: '', isLoading: false);
 
-class LoginSuccess extends LoginState {
-  LoginSuccess(String username, String password)
-      : super(username, password, false);
-}
-
-class LoginFailure extends LoginState {
-  final String errorMessage;
-
-  LoginFailure(String username, String password, this.errorMessage)
-      : super(username, password, false);
+  @override
+  String toString() {
+    return 'LoginState{username: $username, password: $password, isLoading: $isLoading, isLoginSuccess: $isLoginSuccess, isLoginCancel: $isLoginCancel}';
+  }
 }

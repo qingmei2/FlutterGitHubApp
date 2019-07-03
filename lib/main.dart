@@ -1,48 +1,54 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/ui/login/login_page.dart';
 import 'package:flutter_rhine/ui/main/main_page.dart';
 
-import 'blocs/auth.dart';
-import 'blocs/auth_bloc.dart';
+import 'app/app_reducer.dart';
 
 void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-  final UserRepository userRepository = UserRepository();
-
-  runApp(BlocProvider<AuthenticationBloc>(
-    builder: (context) =>
-        AuthenticationBloc(userRepository)..dispatch(AppStart()),
-    child: App(userRepository: userRepository),
-  ));
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  final UserRepository userRepository;
+  App({Key key}) : super(key: key);
 
-  App({Key key, @required this.userRepository}) : super(key: key);
+  final Store<AppState> appStore = Store<AppState>(appReducer);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter-Rhine',
-      debugShowCheckedModeBanner: Config.DEBUG,
-      theme: ThemeData(
-        primaryColor: colorPrimary,
-        primaryColorDark: colorPrimaryDark,
-        accentColor: colorAccent,
-      ),
-      routes: {
-        AppRoutes.login: (context) {
-          return LoginPage(userRepository: userRepository);
+    final UserRepository userRepository = UserRepository();
+    return StoreProvider<AppState>(
+      store: appStore,
+      child: MaterialApp(
+        title: 'Flutter-Rhine',
+        debugShowCheckedModeBanner: Config.DEBUG,
+        theme: ThemeData(
+          primaryColor: colorPrimary,
+          primaryColorDark: colorPrimaryDark,
+          accentColor: colorAccent,
+        ),
+        routes: {
+          AppRoutes.login: (context) {
+            return LoginPage(
+              userRepository: userRepository,
+              loginSuccessCallback: (final User user, final String token) {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, AppRoutes.main);
+                appStore.dispatch(AuthenticationSuccessAction(user, token));
+              },
+              loginCancelCallback: () {
+                appStore.dispatch(AuthenticationCancelAction());
+              },
+            );
+          },
+          AppRoutes.main: (context) {
+            return MainPage(userRepository: userRepository);
+          }
         },
-        AppRoutes.main: (context) {
-          return MainPage(userRepository: userRepository);
-        }
-      },
+      ),
     );
   }
 }

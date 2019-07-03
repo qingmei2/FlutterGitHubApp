@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/constants/constants.dart';
 import 'package:flutter_rhine/common/widget/global_progress_bar.dart';
-import 'package:flutter_rhine/routers/routes.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'login.dart';
-import 'login_bloc.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -20,67 +17,45 @@ class _LoginFormState extends State<LoginForm> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    BlocProvider.of<LoginBloc>(context)
-        .dispatch(InitialEvent(shouldAutoLogin: true));
+    StoreProvider.of<LoginState>(context)
+        .dispatch(InitialAction(shouldAutoLogin: true));
   }
 
   @override
   Widget build(BuildContext context) {
-    final LoginBloc loginBloc = BlocProvider.of<LoginBloc>(context);
-    return BlocListener<LoginEvent, LoginState>(
-      bloc: loginBloc,
-      listener: (context, LoginState state) {
-        print('接收到new State: ${state.toString()}');
-        if (state is LoginFailure) {
-          Fluttertoast.showToast(msg: state.errorMessage);
-        }
-        if (state is LoginSuccess) {
-          _onLoginSuccess(context);
-        }
-        userNameController.text = state.username;
-        passwordController.text = state.password;
+    return StoreConnector<LoginState, LoginState>(
+      converter: (store) {
+        print('接收到new State: ${store.state.toString()}');
+        if (store.state.isLoginSuccess) {}
+        return store.state;
       },
-      child: Container(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
-          child: Stack(
-            alignment: Alignment.center,
-            fit: StackFit.loose,
-            children: <Widget>[
-              SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    _loginTitle(),
-                    _usernameInput(),
-                    _passwordInput(),
-                    _signInButton()
-                  ],
-                ),
+      builder: (context, state) => Container(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 38.0, 16.0, 8.0),
+              child: Stack(
+                alignment: Alignment.center,
+                fit: StackFit.loose,
+                children: <Widget>[
+                  SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        _loginTitle(),
+                        _usernameInput(),
+                        _passwordInput(),
+                        _signInButton()
+                      ],
+                    ),
+                  ),
+                  StoreBuilder<LoginState>(
+                    builder: (context, store) =>
+                        ProgressBar(visibility: store.state.isLoading),
+                  ),
+                ],
               ),
-              BlocBuilder<LoginEvent, LoginState>(
-                bloc: loginBloc,
-                builder: (context, state) {
-                  return ProgressBar(
-                    visibility: state.isLoading,
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
-  }
-
-  /// 登录结果处理
-  void _onLoginSuccess(BuildContext context) {
-    Fluttertoast.showToast(msg: '登录成功，即将跳转主页面');
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context);
-      Navigator.pushNamed(context, AppRoutes.main);
-      return true;
-    });
   }
 
   /// 顶部图标和标题
@@ -110,57 +85,51 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 用户名输入框
   Widget _usernameInput() {
-    final bloc = BlocProvider.of<LoginBloc>(context);
-    final state = bloc.currentState;
-    userNameController.text = state.username;
-
-    return BlocBuilder<LoginEvent, LoginState>(
-      bloc: bloc,
-      builder: (context, state) {
-        return Container(
-          margin: EdgeInsets.only(top: 24.0),
-          child: TextField(
-            controller: userNameController,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-              labelText: 'Username or email address',
-            ),
-          ),
-        );
-      },
+    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
+    final String username = store.state.username ?? '';
+    userNameController.text = username;
+    return Container(
+      margin: EdgeInsets.only(top: 24.0),
+      child: TextField(
+        controller: userNameController,
+        keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+          labelText: 'Username or email address',
+        ),
+      ),
     );
   }
 
   /// 密码输入框
   Widget _passwordInput() {
-    final bloc = BlocProvider.of<LoginBloc>(context);
-    passwordController.text = bloc.currentState.password;
-    return BlocBuilder<LoginEvent, LoginState>(
-      bloc: bloc,
-      builder: (context, state) {
-        return Container(
-          margin: EdgeInsets.only(top: 8.0),
-          child: TextField(
-            controller: passwordController,
-            keyboardType: TextInputType.text,
-            obscureText: true,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-              labelText: 'Password',
+    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
+    final String password = store.state.password ?? '';
+    passwordController.text = password;
+
+    return StoreConnector<LoginState, String>(
+      converter: (store) => store.state.password,
+      builder: (context, _) => Container(
+            margin: EdgeInsets.only(top: 8.0),
+            child: TextField(
+              controller: passwordController,
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                labelText: 'Password',
+              ),
             ),
           ),
-        );
-      },
     );
   }
 
   /// 登录按钮
   Widget _signInButton() {
-    final bloc = BlocProvider.of<LoginBloc>(context);
+    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
 
     /// 登录按钮点击事件
-    void _onLoginButtonClicked(LoginBloc bloc) {
+    void _onLoginButtonClicked(Store<LoginState> store) {
       final String username = userNameController.text;
       final String password = passwordController.text;
 
@@ -171,7 +140,8 @@ class _LoginFormState extends State<LoginForm> {
         return;
       }
 
-      bloc.dispatch(LoginClickedEvent(username: username, password: password));
+      store
+          .dispatch(LoginClickedAction(username: username, password: password));
     }
 
     return Container(
@@ -184,7 +154,7 @@ class _LoginFormState extends State<LoginForm> {
           minHeight: 50.0,
         ),
         child: FlatButton(
-          onPressed: () => _onLoginButtonClicked(bloc),
+          onPressed: () => _onLoginButtonClicked(store),
           color: colorSecondaryDark,
           highlightColor: colorPrimary,
           shape: RoundedRectangleBorder(

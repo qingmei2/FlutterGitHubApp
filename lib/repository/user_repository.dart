@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/constants/constants.dart';
 import 'package:flutter_rhine/common/model/user.dart';
 import 'package:flutter_rhine/common/service/service_manager.dart';
@@ -115,9 +116,9 @@ class UserRepository {
         // 存入内存
         persistUserInfo(user);
 
-        return DataResult(user, true);
+        return DataResult<User>(user, true);
       } else {
-        return DataResult(res.data, false);
+        return DataResult<User>(res.data, false);
       }
     }
 

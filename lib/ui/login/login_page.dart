@@ -1,22 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/repository/repository.dart';
 
 import 'login.dart';
-import 'login_form.dart';
 
+@immutable
 class LoginPage extends StatelessWidget {
   final UserRepository userRepository;
+  final LoginSuccessCallback loginSuccessCallback;
+  final LoginCancelCallback loginCancelCallback;
 
-  LoginPage({Key key, @required this.userRepository})
-      : assert(userRepository != null),
+  LoginPage({
+    Key key,
+    @required this.userRepository,
+    this.loginSuccessCallback,
+    this.loginCancelCallback,
+  })  : assert(userRepository != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final LoginBloc bloc = LoginBloc(userRepository);
-    return BlocProvider(
-      builder: (context) => bloc,
+    final Store<LoginState> store = Store<LoginState>(
+      loginReducer,
+      initialState: LoginState.initial(),
+      middleware: [EpicMiddleware<LoginState>(LoginEpic(userRepository))],
+      distinct: true,
+    );
+
+    return StoreProvider(
+      store: store,
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -34,3 +46,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+
+typedef LoginSuccessCallback(final User user, final String token);
+
+typedef LoginCancelCallback();
