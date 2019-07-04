@@ -17,8 +17,18 @@ class LoginClickedAction extends LoginAction {
   LoginClickedAction({this.username, this.password});
 }
 
+/// 用户自动登录事件
+class AutoLoginAction extends LoginAction {
+  final String username;
+  final String password;
+
+  AutoLoginAction({this.username, this.password});
+}
+
+/// 登录中
 class LoginLoadingAction extends LoginAction {}
 
+/// 登录成功
 class LoginSuccessAction extends LoginAction {
   final User user;
   final String token;
@@ -26,6 +36,7 @@ class LoginSuccessAction extends LoginAction {
   LoginSuccessAction(this.user, this.token);
 }
 
+/// 登录失败
 class LoginFailureAction extends LoginAction {
   final String errorMessage;
 

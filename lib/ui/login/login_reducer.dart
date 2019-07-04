@@ -3,10 +3,22 @@ import 'package:flutter_rhine/common/common.dart';
 import 'login.dart';
 
 final loginReducer = combineReducers<LoginState>([
+  TypedReducer<LoginState, AutoLoginAction>(_autoLogin),
   TypedReducer<LoginState, LoginLoadingAction>(_loginLoading),
   TypedReducer<LoginState, LoginSuccessAction>(_loginSuccess),
   TypedReducer<LoginState, LoginFailureAction>(_loginFailure),
 ]);
+
+LoginState _autoLogin(LoginState state, AutoLoginAction action) {
+  return state.copyWith(
+    username: action.username,
+    password: action.password,
+    user: null,
+    isLoginCancel: null,
+    isLoading: true,
+    error: null,
+  );
+}
 
 LoginState _loginLoading(LoginState state, LoginLoadingAction action) {
   return state.copyWith(

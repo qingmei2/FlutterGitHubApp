@@ -102,9 +102,9 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 用户名输入框
   Widget _usernameInput() {
-//    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
-//    final String username = store.state.username ?? '';
-//    userNameController.text = username;
+    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
+    final String username = store.state.username ?? '';
+    userNameController.text = username;
     return Container(
       margin: EdgeInsets.only(top: 24.0),
       child: TextField(
@@ -120,9 +120,9 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 密码输入框
   Widget _passwordInput() {
-//    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
-//    final String password = store.state.password ?? '';
-//    passwordController.text = password;
+    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
+    final String password = store.state.password ?? '';
+    passwordController.text = password;
     return Container(
       margin: EdgeInsets.only(top: 8.0),
       child: TextField(

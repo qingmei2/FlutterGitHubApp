@@ -38,11 +38,11 @@ class App extends StatelessWidget {
                 print('main_loginSuccessCallback');
                 Navigator.pop(context);
                 Navigator.pushNamed(context, AppRoutes.main);
-//                appStore.dispatch(AuthenticationSuccessAction(user, token));
+                appStore.dispatch(AuthenticationSuccessAction(user, token));
               },
               loginCancelCallback: () {
                 print('loginCancelCallback');
-//                appStore.dispatch(AuthenticationCancelAction());
+                appStore.dispatch(AuthenticationCancelAction());
               },
             );
           },
