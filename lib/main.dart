@@ -32,25 +32,30 @@ class App extends StatelessWidget {
         ),
         routes: {
           AppRoutes.login: (context) {
-            return LoginPage(
-              userRepository: userRepository,
-              loginSuccessCallback: (final User user, final String token) {
-                print('main_loginSuccessCallback');
-                Navigator.pop(context);
-                Navigator.pushNamed(context, AppRoutes.main);
-                appStore.dispatch(AuthenticationSuccessAction(user, token));
-              },
-              loginCancelCallback: () {
-                print('loginCancelCallback');
-                appStore.dispatch(AuthenticationCancelAction());
-              },
-            );
+            return _loginPage(context, userRepository);
           },
           AppRoutes.main: (context) {
             return MainPage(userRepository: userRepository);
-          }
+          },
         },
+        home: _loginPage(context, userRepository),
       ),
+    );
+  }
+
+  Widget _loginPage(context, final UserRepository userRepository) {
+    return LoginPage(
+      userRepository: userRepository,
+      loginSuccessCallback: (final User user, final String token) {
+        print('main_loginSuccessCallback');
+        Navigator.pop(context);
+        Navigator.pushNamed(context, AppRoutes.main);
+        appStore.dispatch(AuthenticationSuccessAction(user, token));
+      },
+      loginCancelCallback: () {
+        print('loginCancelCallback');
+        appStore.dispatch(AuthenticationCancelAction());
+      },
     );
   }
 }
