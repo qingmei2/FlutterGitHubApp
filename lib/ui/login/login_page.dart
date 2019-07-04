@@ -20,12 +20,13 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('LoginPage build......');
+
     final Store<LoginState> store = Store<LoginState>(
       loginReducer,
       initialState: LoginState.initial(),
       middleware: [EpicMiddleware<LoginState>(LoginEpic(userRepository))],
-      distinct: true,
-    );
+    )..dispatch(InitialAction(shouldAutoLogin: true));
 
     return StoreProvider(
       store: store,
@@ -41,12 +42,12 @@ class LoginPage extends StatelessWidget {
             ),
           ),
         ),
-        body: LoginForm(),
+        body: LoginForm(loginSuccessCallback, loginCancelCallback),
       ),
     );
   }
 }
 
-typedef LoginSuccessCallback(final User user, final String token);
+typedef void LoginSuccessCallback(final User user, final String token);
 
-typedef LoginCancelCallback();
+typedef void LoginCancelCallback();

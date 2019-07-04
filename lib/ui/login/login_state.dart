@@ -6,30 +6,35 @@ class LoginState {
   final String password;
   final bool isLoading;
 
-  final bool isLoginSuccess;
+  final User user;
   final bool isLoginCancel;
 
-  LoginState({
-    this.username,
-    this.password,
-    this.isLoading,
-    this.isLoginCancel,
-    this.isLoginSuccess,
-  });
+  final Exception error;
+
+  LoginState(
+      {this.username,
+      this.password,
+      this.isLoading = false,
+      this.isLoginCancel = false,
+      this.user,
+      this.error});
 
   LoginState copyWith({
     String username,
     String password,
     bool isLoading,
-    bool isLoginSuccess,
+    User user,
     bool isLoginCancel,
+    Exception error,
   }) {
     return LoginState(
-        username: username ?? this.username,
-        password: password ?? this.password,
-        isLoading: isLoading ?? this.isLoading,
-        isLoginCancel: isLoginCancel ?? this.isLoginCancel,
-        isLoginSuccess: isLoginSuccess ?? this.isLoginSuccess);
+      username: username ?? this.username,
+      password: password ?? this.password,
+      isLoading: isLoading ?? this.isLoading,
+      isLoginCancel: isLoginCancel ?? this.isLoginCancel,
+      user: user ?? this.user,
+      error: error,
+    );
   }
 
   factory LoginState.initial() =>
@@ -37,6 +42,27 @@ class LoginState {
 
   @override
   String toString() {
-    return 'LoginState{username: $username, password: $password, isLoading: $isLoading, isLoginSuccess: $isLoginSuccess, isLoginCancel: $isLoginCancel}';
+    return 'LoginState{username: $username, password: $password, isLoading: $isLoading, user: $user, isLoginCancel: $isLoginCancel, error: $error}';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LoginState &&
+          runtimeType == other.runtimeType &&
+          username == other.username &&
+          password == other.password &&
+          isLoading == other.isLoading &&
+          user == other.user &&
+          isLoginCancel == other.isLoginCancel &&
+          error == other.error;
+
+  @override
+  int get hashCode =>
+      username.hashCode ^
+      password.hashCode ^
+      isLoading.hashCode ^
+      user.hashCode ^
+      isLoginCancel.hashCode ^
+      error.hashCode;
 }

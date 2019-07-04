@@ -10,14 +10,14 @@ final loginReducer = combineReducers<LoginState>([
 
 LoginState _loginLoading(LoginState state, LoginLoadingAction action) {
   return state.copyWith(
-      isLoginSuccess: null, isLoginCancel: null, isLoading: true);
+      user: null, isLoginCancel: null, isLoading: true, error: null);
 }
 
 LoginState _loginSuccess(LoginState state, LoginSuccessAction action) {
   return state.copyWith(
-      isLoginSuccess: true, isLoginCancel: null, isLoading: false);
+      user: action.user, isLoginCancel: null, isLoading: false, error: null);
 }
 
 LoginState _loginFailure(LoginState state, LoginFailureAction action) {
-  return state.copyWith(isLoading: false);
+  return state.copyWith(isLoading: false, error: Exception('网络错误'));
 }

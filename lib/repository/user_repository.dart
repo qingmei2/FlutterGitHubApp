@@ -85,7 +85,9 @@ class UserRepository {
     var res = await serviceManager.netFetch(Api.authorization,
         json.encode(requestParams), null, new Options(method: "post"));
 
-    DataResult<User> resultData;
+    print('[Api.authorization] result = $res');
+
+    DataResult<User> resultData = DataResult.failure();
     if (res != null && res.result) {
       await SpUtils.save(Config.USER_NAME_KEY, username);
       await SpUtils.save(Config.PW_KEY, password);
@@ -106,23 +108,19 @@ class UserRepository {
   /// [needDb]   是否需要将用户信息存储数据库
   Future<DataResult<User>> getUserInfo(final String userName,
       {final bool needDb = false}) async {
-    next() async {
-      var res = await serviceManager.netFetch(Api.userInfo, null, null, null);
-      if (res != null && res.result) {
-        final User user = User.fromJson(res.data);
+    var res = await serviceManager.netFetch(Api.userInfo, null, null, null);
+    if (res != null && res.result) {
+      final User user = User.fromJson(res.data);
 
-        // 存入持久层
-        if (needDb) SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
-        // 存入内存
-        persistUserInfo(user);
+      // 存入持久层
+      if (needDb) SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
+      // 存入内存
+      persistUserInfo(user);
 
-        return DataResult<User>(user, true);
-      } else {
-        return DataResult<User>(res.data, false);
-      }
+      return DataResult<User>(user, true);
+    } else {
+      return DataResult.failure();
     }
-
-    return await next();
   }
 
   /// 退出登录
