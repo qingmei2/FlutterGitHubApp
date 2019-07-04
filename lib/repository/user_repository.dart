@@ -74,6 +74,8 @@ class UserRepository {
       print("base64Str login " + base64Str);
     }
 
+    await SpUtils.save(Config.USER_BASIC_CODE, base64Str);
+
     final Map requestParams = {
       "scopes": ['user', 'repo'],
       "note": "admin_script",
@@ -84,8 +86,6 @@ class UserRepository {
 
     var res = await serviceManager.netFetch(Api.authorization,
         json.encode(requestParams), null, new Options(method: "post"));
-
-    print('[Api.authorization] result = $res');
 
     DataResult<User> resultData = DataResult.failure();
     if (res != null && res.result) {
@@ -117,7 +117,7 @@ class UserRepository {
       // 存入内存
       persistUserInfo(user);
 
-      return DataResult<User>(user, true);
+      return DataResult.success(user);
     } else {
       return DataResult.failure();
     }
