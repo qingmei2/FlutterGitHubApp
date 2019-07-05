@@ -26,26 +26,18 @@ class _LoginFormState extends State<LoginForm> {
   _LoginFormState(this.loginSuccessCallback, this.loginCancelCallback);
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    print('logger didChangeDependencies');
-//    StoreProvider.of<LoginState>(context)
-//        .dispatch(InitialAction(shouldAutoLogin: true));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return StoreConnector<LoginState, LoginState>(
+    return StoreConnector<AppState, LoginState>(
       converter: (store) {
-        print('onNext State: ${store.state.toString()}');
-        final User user = store.state.user;
+        print('onNext State: ${store.state.loginState.toString()}');
+        final User user = store.state.loginState.user;
         if (user != null && loginSuccessCallback != null) {
-          loginSuccessCallback(user, user.token);
+          loginSuccessCallback(context, user, user.token);
         }
-        if (store.state.isLoginCancel) {
-          loginCancelCallback();
+        if (store.state.loginState.isLoginCancel) {
+          loginCancelCallback(context);
         }
-        return store.state;
+        return store.state.loginState;
       },
       builder: (context, LoginState state) => Container(
             alignment: Alignment.topCenter,
@@ -88,8 +80,8 @@ class _LoginFormState extends State<LoginForm> {
                       ],
                     ),
                   ),
-                  StoreConnector<LoginState, bool>(
-                    converter: (store) => store.state.isLoading,
+                  StoreConnector<AppState, bool>(
+                    converter: (store) => store.state.loginState.isLoading,
                     builder: (context, visibility) =>
                         ProgressBar(visibility: visibility),
                   ),
@@ -102,8 +94,8 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 用户名输入框
   Widget _usernameInput() {
-    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
-    final String username = store.state.username ?? '';
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
+    final String username = store.state.loginState.username ?? '';
     userNameController.text = username;
     return Container(
       margin: EdgeInsets.only(top: 24.0),
@@ -120,8 +112,8 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 密码输入框
   Widget _passwordInput() {
-    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
-    final String password = store.state.password ?? '';
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
+    final String password = store.state.loginState.password ?? '';
     passwordController.text = password;
     return Container(
       margin: EdgeInsets.only(top: 8.0),
@@ -139,10 +131,10 @@ class _LoginFormState extends State<LoginForm> {
 
   /// 登录按钮
   Widget _signInButton() {
-    final Store<LoginState> store = StoreProvider.of<LoginState>(context);
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
 
     /// 登录按钮点击事件
-    void _onLoginButtonClicked(Store<LoginState> store) {
+    void _onLoginButtonClicked(Store<AppState> store) {
       final String username = userNameController.text;
       final String password = passwordController.text;
 
