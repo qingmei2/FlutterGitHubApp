@@ -66,9 +66,9 @@ class _MainEventsFormState extends State<MainEventForm>
   Widget build(BuildContext context) {
     super.build(context);
     final bloc = BlocProvider.of<MainEventsBloc>(context);
-    return BlocListener<MainEventsEvent, MainEventsState>(
+    return BlocListener<MainEventsEvent, MainEventsStates>(
       bloc: bloc,
-      listener: (context, MainEventsState state) {},
+      listener: (context, MainEventsStates state) {},
       child: _eventList(),
     );
   }

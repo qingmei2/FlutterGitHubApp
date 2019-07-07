@@ -3,13 +3,13 @@ import 'package:flutter_rhine/common/common.dart';
 
 import 'main_issues.dart';
 
-class MainIssuesBloc extends Bloc<MainIssuesEvent, MainIssuesState> {
+class MainIssuesBloc extends Bloc<MainIssuesEvent, MainIssuesStates> {
   @override
-  MainIssuesState get initialState => MainIssuesEmptyState();
+  MainIssuesStates get initialState => MainIssuesEmptyState();
 
   @override
-  Stream<MainIssuesState> mapEventToState(MainIssuesEvent event) async* {
-    final MainIssuesState nowState = currentState;
+  Stream<MainIssuesStates> mapEventToState(MainIssuesEvent event) async* {
+    final MainIssuesStates nowState = currentState;
     if (event is MainIssuesInitialEvent) {
       yield MainIssuesFirstLoading();
       yield* _pagingRequestStream(
@@ -35,7 +35,7 @@ class MainIssuesBloc extends Bloc<MainIssuesEvent, MainIssuesState> {
   /// [sort] 排序规则,[IssuesRepository.SORT_CREATED]、[IssuesRepository.SORT_UPDATED]、[IssuesRepository.SORT_COMMENTS]
   /// [state] issue状态,[IssuesRepository.STATE_OPEN]、[IssuesRepository.STATE_CLOSED]、[IssuesRepository.STATE_ALL]
   /// [previousList] 之前的列表数据
-  Stream<MainIssuesState> _pagingRequestStream({
+  Stream<MainIssuesStates> _pagingRequestStream({
     final int newPageIndex,
     final List<Issue> previousList,
     final String sort = IssuesRepository.SORT_UPDATED,

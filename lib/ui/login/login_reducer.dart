@@ -8,6 +8,7 @@ final loginReducer = combineReducers<LoginState>([
   TypedReducer<LoginState, LoginLoadingAction>(_loginLoading),
   TypedReducer<LoginState, LoginSuccessAction>(_loginSuccess),
   TypedReducer<LoginState, LoginFailureAction>(_loginFailure),
+  TypedReducer<LoginState, LoginDisposeAction>(_loginDispose),
 ]);
 
 LoginState _clickLogin(LoginState state, LoginClickedAction action) {
@@ -44,4 +45,15 @@ LoginState _loginSuccess(LoginState state, LoginSuccessAction action) {
 
 LoginState _loginFailure(LoginState state, LoginFailureAction action) {
   return state.copyWith(isLoading: false, error: action.exception);
+}
+
+LoginState _loginDispose(LoginState state, LoginDisposeAction action) {
+  return state.copyWith(
+    user: null,
+    isLoginCancel: false,
+    isLoading: false,
+    error: null,
+    username: '',
+    password: '',
+  );
 }

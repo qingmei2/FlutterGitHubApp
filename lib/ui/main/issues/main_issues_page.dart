@@ -48,7 +48,7 @@ class _MainIssuesFormState extends State<MainIssuesForm>
   Widget build(BuildContext context) {
     super.build(context);
     final MainIssuesBloc bloc = BlocProvider.of<MainIssuesBloc>(context);
-    return BlocBuilder<MainIssuesEvent, MainIssuesState>(
+    return BlocBuilder<MainIssuesEvent, MainIssuesStates>(
       bloc: bloc,
       builder: (_, state) {
         if (state is MainIssuesEmptyState) {

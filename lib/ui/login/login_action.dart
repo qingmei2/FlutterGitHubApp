@@ -9,6 +9,9 @@ class InitialAction extends LoginAction {
   InitialAction({this.shouldAutoLogin}) : assert(shouldAutoLogin != null);
 }
 
+/// 释放事件
+class LoginDisposeAction extends LoginAction {}
+
 /// 用户点击登录事件
 class LoginClickedAction extends LoginAction {
   final String username;

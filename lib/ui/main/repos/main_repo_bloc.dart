@@ -3,13 +3,13 @@ import 'package:flutter_rhine/common/common.dart';
 
 import 'main_repo.dart';
 
-class MainReposBloc extends Bloc<MainReposEvent, MainReposState> {
+class MainReposBloc extends Bloc<MainReposEvent, MainReposStates> {
   @override
-  MainReposState get initialState => MainReposEmptyState();
+  MainReposStates get initialState => MainReposEmptyState();
 
   @override
-  Stream<MainReposState> mapEventToState(MainReposEvent event) async* {
-    final MainReposState nowState = currentState;
+  Stream<MainReposStates> mapEventToState(MainReposEvent event) async* {
+    final MainReposStates nowState = currentState;
 
     if (event is MainReposInitialEvent) {
       yield MainReposFirstLoading();
@@ -34,7 +34,7 @@ class MainReposBloc extends Bloc<MainReposEvent, MainReposState> {
   /// [previousList] 之前的列表数据
   /// [username]     用户名
   /// [sort]         排序规则，应使用[UserRepoRepository.SORT_UPDATED]、[UserRepoRepository.SORT_CREATED]、[UserRepoRepository.SORT_LETTER]
-  Stream<MainReposState> _pagingRequestStream(
+  Stream<MainReposStates> _pagingRequestStream(
     int newPageIndex,
     List<Repo> previousList,
     String username,

@@ -12,13 +12,14 @@ class LoginState {
 
   final Exception error;
 
-  LoginState(
-      {this.username,
-      this.password,
-      this.isLoading = false,
-      this.isLoginCancel = false,
-      this.user,
-      this.error});
+  LoginState({
+    this.username,
+    this.password,
+    this.isLoading = false,
+    this.isLoginCancel = false,
+    this.user,
+    this.error,
+  });
 
   LoginState copyWith({
     String username,
@@ -33,7 +34,7 @@ class LoginState {
       password: password ?? this.password,
       isLoading: isLoading ?? this.isLoading,
       isLoginCancel: isLoginCancel ?? this.isLoginCancel,
-      user: user ?? this.user,
+      user: user,
       error: error,
     );
   }

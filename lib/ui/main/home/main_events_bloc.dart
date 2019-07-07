@@ -3,13 +3,13 @@ import 'package:flutter_rhine/common/common.dart';
 
 import 'main_events.dart';
 
-class MainEventsBloc extends Bloc<MainEventsEvent, MainEventsState> {
+class MainEventsBloc extends Bloc<MainEventsEvent, MainEventsStates> {
   @override
-  MainEventsState get initialState => MainEventsEmptyState();
+  MainEventsStates get initialState => MainEventsEmptyState();
 
   @override
-  Stream<MainEventsState> mapEventToState(MainEventsEvent event) async* {
-    final MainEventsState nowState = currentState;
+  Stream<MainEventsStates> mapEventToState(MainEventsEvent event) async* {
+    final MainEventsStates nowState = currentState;
 
     if (event is MainEventsInitialEvent) {
       yield MainEventsFirstLoading();
@@ -27,7 +27,7 @@ class MainEventsBloc extends Bloc<MainEventsEvent, MainEventsState> {
   /// [newPageIndex] 新的分页索引
   /// [previousList] 之前的列表数据
   /// [username]     用户名
-  Stream<MainEventsState> _pagingRequestStream(
+  Stream<MainEventsStates> _pagingRequestStream(
       int newPageIndex, List<Event> previousList, String username) async* {
     final DataResult<List<Event>> result =
         await UserEventRepository.fetchEvents(username, newPageIndex);

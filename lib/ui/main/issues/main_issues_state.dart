@@ -1,14 +1,18 @@
 import 'package:flutter_rhine/common/common.dart';
 import 'package:meta/meta.dart';
 
-abstract class MainIssuesState {
+class MainIssuesState {
+
+}
+
+abstract class MainIssuesStates {
   final bool isLoading;
   final int currentPage;
   final List<Issue> issues;
   final String listSort;
   final String listState;
 
-  MainIssuesState({
+  MainIssuesStates({
     @required this.currentPage,
     this.issues,
     this.isLoading = false,
@@ -18,17 +22,17 @@ abstract class MainIssuesState {
 }
 
 /// 加载中
-class MainIssuesFirstLoading extends MainIssuesState {
+class MainIssuesFirstLoading extends MainIssuesStates {
   MainIssuesFirstLoading() : super(isLoading: true, currentPage: 0, issues: []);
 }
 
 /// 空列表状态
-class MainIssuesEmptyState extends MainIssuesState {
+class MainIssuesEmptyState extends MainIssuesStates {
   MainIssuesEmptyState() : super(currentPage: 0, isLoading: false);
 }
 
 /// 加载分页数据成功
-class MainIssuesPageLoadSuccess extends MainIssuesState {
+class MainIssuesPageLoadSuccess extends MainIssuesStates {
   MainIssuesPageLoadSuccess({
     @required List<Issue> issues,
     @required int currentPage,
@@ -36,7 +40,7 @@ class MainIssuesPageLoadSuccess extends MainIssuesState {
 }
 
 /// 加载分页数据失败
-class MainIssuesPageLoadFailure extends MainIssuesState {
+class MainIssuesPageLoadFailure extends MainIssuesStates {
   final String errorMessage;
 
   MainIssuesPageLoadFailure({

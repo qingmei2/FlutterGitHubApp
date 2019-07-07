@@ -60,7 +60,7 @@ class _MainReposFormState extends State<MainReposForm>
     final MainReposBloc bloc = BlocProvider.of<MainReposBloc>(context);
     return BlocBuilder(
       bloc: bloc,
-      builder: (context, MainReposState state) {
+      builder: (context, MainReposStates state) {
         return Scaffold(
           appBar: AppBar(
             title: Text('Repos'),
@@ -100,9 +100,9 @@ class _MainReposFormState extends State<MainReposForm>
   Widget _repoList() {
     final MainReposBloc bloc = BlocProvider.of<MainReposBloc>(context);
 
-    return BlocBuilder<MainReposEvent, MainReposState>(
+    return BlocBuilder<MainReposEvent, MainReposStates>(
       bloc: bloc,
-      builder: (context, MainReposState state) {
+      builder: (context, MainReposStates state) {
         if (state is MainReposFirstLoading) {
           return Center(
             child: ProgressBar(visibility: true),

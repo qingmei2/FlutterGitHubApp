@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:android_intent/android_intent.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
 import 'package:flutter_rhine/repository/repository.dart';
@@ -29,7 +29,6 @@ class _MainPageState extends State<MainPage>
   final UserRepository userRepository;
 
   final _pageController = PageController();
-  final MainPageBloc mainBloc = MainPageBloc();
 
   _MainPageState({@required this.userRepository});
 
@@ -55,6 +54,11 @@ class _MainPageState extends State<MainPage>
   final List<String> _bottomTabTitles = ['home', 'repos', 'issues', 'me'];
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _pageController.dispose();
@@ -62,57 +66,50 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => mainBloc,
-      child: WillPopScope(
-        onWillPop: () {
-          return _dialogExitApp(context);
-        },
-        child: BlocListener<MainPageEvent, MainPageState>(
-          bloc: mainBloc,
-          listener: (_, state) {
+    return WillPopScope(
+      onWillPop: () {
+        return _dialogExitApp(context);
+      },
+      child: StoreConnector<AppState, MainPageState>(
+        converter: (store) {
+          final MainPageState state = store.state.mainState;
+          if (_pageController.hasClients) {
             final int currentPosition = _pageController.page.toInt();
             final int newPosition = state.currentPageIndex;
             if (currentPosition != newPosition)
               _pageController.jumpToPage(newPosition);
-          },
-          child: BlocBuilder<MainPageEvent, MainPageState>(
-            bloc: mainBloc,
-            builder: (_, state) => Scaffold(
-                  body: PageView(
-                    children: <Widget>[
-                      MainEventsPage(userRepository: userRepository),
-                      MainReposPage(userRepository: userRepository),
-                      MainIssuesPage(),
-                      MainProfilePage(userRepository: userRepository)
-                    ],
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      mainBloc.dispatch(MainSwipeViewPagerEvent(index));
-                    },
-                  ),
-                  bottomNavigationBar: BottomNavigationBar(
-                    backgroundColor: colorPrimary,
-                    items: <BottomNavigationBarItem>[
-                      _bottomNavigationBarItem(
-                          state, MainPageState.TAB_INDEX_EVENTS),
-                      _bottomNavigationBarItem(
-                          state, MainPageState.TAB_INDEX_REPOS),
-                      _bottomNavigationBarItem(
-                          state, MainPageState.TAB_INDEX_ISSUES),
-                      _bottomNavigationBarItem(
-                          state, MainPageState.TAB_INDEX_PROFILE),
-                    ],
-                    currentIndex: state.currentPageIndex,
-                    iconSize: 24.0,
-                    type: BottomNavigationBarType.fixed,
-                    onTap: (newIndex) {
-                      mainBloc.dispatch(MainChoiceBottomTabEvent(newIndex));
-                    },
-                  ),
-                ),
-          ),
-        ),
+          }
+          return state;
+        },
+        builder: (BuildContext context, MainPageState state) => Scaffold(
+              body: PageView(
+                children: <Widget>[
+                  MainEventsPage(userRepository: userRepository),
+                  MainReposPage(userRepository: userRepository),
+                  MainIssuesPage(),
+                  MainProfilePage(userRepository: userRepository)
+                ],
+                controller: _pageController,
+                onPageChanged: _notifyViewPagerChanged,
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                backgroundColor: colorPrimary,
+                items: <BottomNavigationBarItem>[
+                  _bottomNavigationBarItem(
+                      state, MainPageState.TAB_INDEX_EVENTS),
+                  _bottomNavigationBarItem(
+                      state, MainPageState.TAB_INDEX_REPOS),
+                  _bottomNavigationBarItem(
+                      state, MainPageState.TAB_INDEX_ISSUES),
+                  _bottomNavigationBarItem(
+                      state, MainPageState.TAB_INDEX_PROFILE),
+                ],
+                currentIndex: state.currentPageIndex,
+                iconSize: 24.0,
+                type: BottomNavigationBarType.fixed,
+                onTap: _notifyViewPagerChanged,
+              ),
+            ),
       ),
     );
   }
@@ -149,5 +146,10 @@ class _MainPageState extends State<MainPage>
     final Color textColor =
         (currentPageIndex == tabIndex) ? Colors.white : colorSecondaryTextGray;
     return Text(title, style: TextStyle(fontSize: 14.0, color: textColor));
+  }
+
+  void _notifyViewPagerChanged(int newIndex) {
+    StoreProvider.of<AppState>(context)
+        .dispatch(MainSwipeViewPagerAction(newIndex));
   }
 }

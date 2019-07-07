@@ -63,7 +63,7 @@ class _MainProfileFormState extends State<MainProfileForm>
         children: <Widget>[
           BlocBuilder(
             bloc: BlocProvider.of<MainProfileBloc>(context),
-            builder: (context, MainProfileState state) {
+            builder: (context, MainProfileStates state) {
               return MainProfileUserInfoLayer(state.user);
             },
           ),

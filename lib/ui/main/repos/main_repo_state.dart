@@ -1,13 +1,15 @@
 import 'package:flutter_rhine/common/common.dart';
 import 'package:meta/meta.dart';
 
-abstract class MainReposState {
+class MainReposState {}
+
+abstract class MainReposStates {
   final bool isLoading;
   final int currentPage;
   final List<Repo> repos;
   final String sortType;
 
-  MainReposState({
+  MainReposStates({
     @required this.currentPage,
     this.repos,
     this.isLoading = false,
@@ -16,17 +18,17 @@ abstract class MainReposState {
 }
 
 /// 加载中
-class MainReposFirstLoading extends MainReposState {
+class MainReposFirstLoading extends MainReposStates {
   MainReposFirstLoading() : super(isLoading: true, currentPage: 0, repos: []);
 }
 
 /// 空列表状态
-class MainReposEmptyState extends MainReposState {
+class MainReposEmptyState extends MainReposStates {
   MainReposEmptyState() : super(currentPage: 0, isLoading: false);
 }
 
 /// 加载分页数据成功
-class MainReposPageLoadSuccess extends MainReposState {
+class MainReposPageLoadSuccess extends MainReposStates {
   MainReposPageLoadSuccess({
     @required List<Repo> repos,
     @required int currentPage,
@@ -34,7 +36,7 @@ class MainReposPageLoadSuccess extends MainReposState {
 }
 
 /// 加载分页数据失败
-class MainReposPageLoadFailure extends MainReposState {
+class MainReposPageLoadFailure extends MainReposStates {
   final String errorMessage;
 
   MainReposPageLoadFailure({

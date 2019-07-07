@@ -1,12 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_rhine/ui/main/main.dart';
 
-class MainProfileBloc extends Bloc<MainProfileEvent, MainProfileState> {
+class MainProfileBloc extends Bloc<MainProfileEvent, MainProfileStates> {
   @override
-  MainProfileState get initialState => MainProfileIdleState();
+  MainProfileStates get initialState => MainProfileIdleState();
 
   @override
-  Stream<MainProfileState> mapEventToState(MainProfileEvent event) async* {
+  Stream<MainProfileStates> mapEventToState(MainProfileEvent event) async* {
     if (event is MainProfileInitialEvent) {
       yield MainProfileInitSuccessState(event.user);
     }

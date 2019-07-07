@@ -23,9 +23,7 @@ class App extends StatelessWidget {
 
     final Store<AppState> appStore = Store<AppState>(
       appReducer,
-      initialState: AppState(
-        loginState: LoginState.initial(),
-      ),
+      initialState: AppState.initial(),
       middleware: [
         EpicMiddleware<AppState>(LoginEpic(userRepository)),
       ],
@@ -66,7 +64,6 @@ class App extends StatelessWidget {
         final String token,
       ) {
         toast('登录成功，跳转主页面');
-
         Navigator.pop(context);
         Navigator.pushNamed(context, AppRoutes.main);
         appStore.dispatch(AuthenticationSuccessAction(user, token));
