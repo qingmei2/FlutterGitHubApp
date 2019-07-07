@@ -108,9 +108,10 @@ class UserRepository {
   /// [needDb]   是否需要将用户信息存储数据库
   Future<DataResult<User>> getUserInfo(final String userName,
       {final bool needDb = false}) async {
-    var res = await serviceManager.netFetch(Api.userInfo, null, null, null);
+    final DataResult<dynamic> res =
+        await serviceManager.netFetch(Api.userInfo, null, null, null);
     if (res != null && res.result) {
-      final User user = User.fromJson(res.data);
+      final User user = User.fromJson(res.data.data);
 
       // 存入持久层
       if (needDb) SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));

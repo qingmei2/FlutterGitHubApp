@@ -33,7 +33,7 @@ class ServiceManager {
   /// [ params] 请求参数
   /// [ header] 外加头
   /// [ option] 配置
-  Future<DataResult> netFetch(
+  Future<DataResult<dynamic>> netFetch(
     final url,
     final params,
     final Map<String, dynamic> header,
