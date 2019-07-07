@@ -1,8 +1,8 @@
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/service/api_code.dart';
-import 'package:flutter_rhine/common/service/result_data.dart';
 
 import 'interceptors/header_interceptor.dart';
 import 'interceptors/response_interceptor.dart';
@@ -28,14 +28,17 @@ class ServiceManager {
     _dio.interceptors.add(_tokenInterceptor);
   }
 
-  ///发起网络请求
-  ///[ url] 请求url
-  ///[ params] 请求参数
-  ///[ header] 外加头
-  ///[ option] 配置
-  netFetch(final url, final params, final Map<String, dynamic> header,
-      Options option,
-      {final bool noTip = false}) async {
+  /// 发起网络请求
+  /// [ url] 请求url
+  /// [ params] 请求参数
+  /// [ header] 外加头
+  /// [ option] 配置
+  Future<DataResult> netFetch(
+    final url,
+    final params,
+    final Map<String, dynamic> header,
+    Options option,
+  ) async {
     Map<String, dynamic> headers = new HashMap();
     if (header != null) {
       headers.addAll(header);
@@ -52,32 +55,33 @@ class ServiceManager {
     try {
       response = await _dio.request(url, data: params, options: option);
     } on DioError catch (e) {
-      return _resultError(e, noTip);
+      return _resultError(e);
     }
     if (response.data is DioError) {
-      return _resultError(response.data, noTip);
+      return _resultError(response.data);
     }
-    return response.data;
+    return DataResult.success(response.data);
   }
 
   /// 生成请求失败对应的error
   /// [e] 网络请求失败的error
-  /// [noTip]
-  _resultError(final DioError e, final bool noTip) {
+  DataResult _resultError(final DioError e) {
     Response errorResponse;
     if (e.response != null) {
       errorResponse = e.response;
     } else {
-      errorResponse = new Response(statusCode: 666);
+      errorResponse = new Response(statusCode: 400);
     }
     if (e.type == DioErrorType.CONNECT_TIMEOUT ||
         e.type == DioErrorType.RECEIVE_TIMEOUT) {
       errorResponse.statusCode = ApiCode.NETWORK_TIMEOUT;
     }
-    return new ResultData(
-        ApiCode.errorHandleFunction(errorResponse.statusCode, e.message, noTip),
-        false,
-        errorResponse.statusCode);
+    final Exception exception = Errors.networkException(
+      message: e.message,
+      statusCode: errorResponse.statusCode,
+    );
+
+    return DataResult.failure(exception);
   }
 
   ///清除授权

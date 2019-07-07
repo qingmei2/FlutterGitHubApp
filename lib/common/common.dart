@@ -3,6 +3,7 @@ export 'package:meta/meta.dart';
 export 'package:redux/redux.dart';
 export 'package:redux_epics/redux_epics.dart';
 export 'package:rxdart/rxdart.dart';
+export 'errors/errors.dart';
 
 export '../app/app.dart';
 export '../repository/repository.dart';

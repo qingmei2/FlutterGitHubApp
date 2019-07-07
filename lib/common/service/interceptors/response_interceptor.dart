@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
-
-import '../api_code.dart';
-import '../result_data.dart';
+import 'package:flutter_rhine/common/errors/errors.dart';
+import 'package:flutter_rhine/repository/others/dao_result.dart';
 
 class ResponseInterceptors extends InterceptorsWrapper {
   @override
@@ -10,16 +9,16 @@ class ResponseInterceptors extends InterceptorsWrapper {
     try {
       if (option.contentType != null &&
           option.contentType.primaryType == 'text') {
-        return ResultData(response.data, true, ApiCode.SUCCESS);
+        return DataResult.success(response.data);
       }
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return ResultData(response.data, true, ApiCode.SUCCESS,
-            headers: response.headers);
+        return DataResult.success(response.data);
       }
     } catch (e) {
       print(e.toString() + option.path);
-      return ResultData(response.data, false, response.statusCode,
-          headers: response.headers);
+      final networkError =
+          NetworkRequestException('network error', response.statusCode);
+      return DataResult.failure(networkError);
     }
   }
 }

@@ -26,7 +26,7 @@ class UserEventRepository {
         print(res.data.toString());
       }
     } else {
-      resultData = DataResult.failure();
+      resultData = DataResult.failure(Exception('获取用户事件失败'));
     }
 
     return resultData;

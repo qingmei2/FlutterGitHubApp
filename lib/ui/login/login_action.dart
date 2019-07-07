@@ -38,7 +38,7 @@ class LoginSuccessAction extends LoginAction {
 
 /// 登录失败
 class LoginFailureAction extends LoginAction {
-  final String errorMessage;
+  final Exception exception;
 
-  LoginFailureAction(this.errorMessage);
+  LoginFailureAction(this.exception);
 }

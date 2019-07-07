@@ -32,19 +32,19 @@ class IssuesRepository {
         Api.getPageParams('?', page, perPage) +
         '&sort=$sort&common.state=$state';
 
-    var res = await serviceManager.netFetch(url, null, null, null);
+    DataResult res = await serviceManager.netFetch(url, null, null, null);
     if (res != null && res.result) {
       List<Issue> list = new List();
       var data = res.data;
       if (data == null || data.length == 0) {
-        return DataResult.failure();
+        return DataResult.failure(Errors.emptyListException());
       }
       for (int i = 0; i < data.length; i++) {
         list.add(Issue.fromJson(data[i]));
       }
       return DataResult.success(list);
     } else {
-      return DataResult.failure();
+      return DataResult.failure(Errors.networkException(statusCode: 400));
     }
   }
 

@@ -64,7 +64,7 @@ class UserRepository {
         username == '' ||
         password == null ||
         password == '') {
-      return DataResult.failure();
+      return DataResult.failure(Errors.emptyInputException('用户名密码不能为空'));
     }
 
     final String type = username + ":" + password;
@@ -87,20 +87,20 @@ class UserRepository {
     var res = await serviceManager.netFetch(Api.authorization,
         json.encode(requestParams), null, new Options(method: "post"));
 
-    DataResult<User> resultData = DataResult.failure();
     if (res != null && res.result) {
       await SpUtils.save(Config.USER_NAME_KEY, username);
       await SpUtils.save(Config.PW_KEY, password);
-      resultData = await getUserInfo(null);
+      DataResult<User> resultData = await getUserInfo(null);
 
       if (Config.DEBUG) {
         print("user result " + resultData.result.toString());
         print(resultData.data);
         print(res.data.toString());
       }
+      return resultData;
+    } else {
+      return DataResult.failure(Errors.loginFailureException());
     }
-
-    return resultData;
   }
 
   /// 获取用户登录信息
@@ -119,7 +119,7 @@ class UserRepository {
 
       return DataResult.success(user);
     } else {
-      return DataResult.failure();
+      return DataResult.failure(Errors.loginFailureException());
     }
   }
 

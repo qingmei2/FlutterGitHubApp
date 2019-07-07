@@ -6,6 +6,7 @@ class LoginState {
   final String password;
   final bool isLoading;
 
+  /// 用户信息，当用户信息不为空时，视为登录成功，跳转login页面
   final User user;
   final bool isLoginCancel;
 

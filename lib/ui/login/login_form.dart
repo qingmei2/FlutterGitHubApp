@@ -29,15 +29,26 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, LoginState>(
       converter: (store) {
-        print('onNext State: ${store.state.loginState.toString()}');
-        final User user = store.state.loginState.user;
+        final state = store.state.loginState;
+        if (Config.DEBUG) print('onNext State: ${state.toString()}');
+
+        final User user = state.user;
+        // 登录成功
         if (user != null && loginSuccessCallback != null) {
           loginSuccessCallback(context, user, user.token);
         }
-        if (store.state.loginState.isLoginCancel) {
+        // 取消登录
+        if (state.isLoginCancel) {
           loginCancelCallback(context);
         }
-        return store.state.loginState;
+        // 异常事件
+        final Exception error = state.error;
+        if (error != null) {
+          if (error is NetworkRequestException) toast(error.message);
+          if (error is LoginFailureException) toast(error.message);
+          if (error is EmptyInputException) toast(error.message);
+        }
+        return state;
       },
       builder: (context, LoginState state) => Container(
             alignment: Alignment.topCenter,
@@ -135,17 +146,8 @@ class _LoginFormState extends State<LoginForm> {
 
     /// 登录按钮点击事件
     void _onLoginButtonClicked(Store<AppState> store) {
-      final String username = userNameController.text;
-      final String password = passwordController.text;
-
-      print('_onLoginButtonClicked, username: $username, password: $password.');
-
-      if (username == null || username.length == 0) {
-        return;
-      }
-      if (password == null || password.length == 0) {
-        return;
-      }
+      final String username = userNameController.text ?? '';
+      final String password = passwordController.text ?? '';
 
       store
           .dispatch(LoginClickedAction(username: username, password: password));

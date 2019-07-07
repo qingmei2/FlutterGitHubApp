@@ -43,5 +43,5 @@ LoginState _loginSuccess(LoginState state, LoginSuccessAction action) {
 }
 
 LoginState _loginFailure(LoginState state, LoginFailureAction action) {
-  return state.copyWith(isLoading: false, error: Exception('网络错误'));
+  return state.copyWith(isLoading: false, error: action.exception);
 }
