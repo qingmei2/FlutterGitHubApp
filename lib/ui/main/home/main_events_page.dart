@@ -58,8 +58,8 @@ class _MainEventsFormState extends State<MainEventForm>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    BlocProvider.of<MainEventsBloc>(context)
-        .dispatch(MainEventsInitialEvent(username: userRepository.user.login));
+//    BlocProvider.of<MainEventsBloc>(context)
+//        .dispatch(MainEventsInitialEvent(username: userRepository.user.login));
   }
 
   @override
@@ -134,8 +134,8 @@ class _MainEventsFormState extends State<MainEventForm>
       ),
       autoLoad: true,
       loadMore: () async {
-        BlocProvider.of<MainEventsBloc>(context).dispatch(
-            MainEventLoadNextPageEvent(username: userRepository.user.login));
+//        BlocProvider.of<MainEventsBloc>(context).dispatch(
+//            MainEventLoadNextPageEvent(username: userRepository.user.login));
       },
     );
   }

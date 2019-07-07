@@ -50,8 +50,8 @@ class _MainReposFormState extends State<MainReposForm>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    BlocProvider.of<MainReposBloc>(context)
-        .dispatch(MainReposInitialEvent(username: userRepository.user.login));
+//    BlocProvider.of<MainReposBloc>(context)
+//        .dispatch(MainReposInitialEvent(username: userRepository.user.login));
   }
 
   @override
@@ -70,7 +70,7 @@ class _MainReposFormState extends State<MainReposForm>
                 onSelected: (newValue) {
                   // 更新排序条件，刷新ui
                   bloc.dispatch(MainReposChangeFilterEvent(
-                    username: userRepository.user.login,
+//                    username: userRepository.user.login,
                     sortType: newValue,
                   ));
                 },
@@ -146,8 +146,8 @@ class _MainReposFormState extends State<MainReposForm>
       ),
       autoLoad: true,
       loadMore: () async {
-        bloc.dispatch(
-            MainReposLoadNextPageEvent(username: userRepository.user.login));
+//        bloc.dispatch(
+//            MainReposLoadNextPageEvent(username: userRepository.user.login));
       },
     );
   }

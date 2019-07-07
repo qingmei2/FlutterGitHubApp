@@ -9,16 +9,6 @@ import 'package:flutter_rhine/repository/others/dao_result.dart';
 import 'package:flutter_rhine/repository/others/sputils.dart';
 
 class UserRepository {
-  /// 用户信息
-  User _user;
-
-  /// 用户token
-  String _token;
-
-  User get user => _user;
-
-  String get token => _token;
-
   /// 用户是否自动登录
   Future<bool> hasAutoLoginInfo() async {
     final String usernameTemp = await SpUtils.get(Config.USER_NAME_KEY) ?? '';
@@ -33,26 +23,6 @@ class UserRepository {
     final String passwordTemp = await SpUtils.get(Config.PW_KEY) ?? '';
 
     return [usernameTemp, passwordTemp];
-  }
-
-  /// 用户是否登录
-  Future<bool> isLogin() async {
-    return _token != null && _token != null;
-  }
-
-  /// 存储用户Token
-  /// [token] 用户的token
-  Future<void> persistToken(final String token) async {
-    assert(token != null);
-    this._token = token;
-    return;
-  }
-
-  /// 存储用户信息
-  Future<void> persistUserInfo(final User user) async {
-    assert(user != null);
-    this._user = user;
-    return;
   }
 
   /// 用户登录
@@ -82,7 +52,6 @@ class UserRepository {
       "client_id": Ignore.clientId,
       "client_secret": Ignore.clientSecret
     };
-    logout();
 
     var res = await serviceManager.netFetch(Api.authorization,
         json.encode(requestParams), null, new Options(method: "post"));
@@ -115,19 +84,10 @@ class UserRepository {
 
       // 存入持久层
       if (needDb) SpUtils.save(Config.USER_INFO, json.encode(user.toJson()));
-      // 存入内存
-      persistUserInfo(user);
 
       return DataResult.success(user);
     } else {
       return DataResult.failure(Errors.loginFailureException());
     }
-  }
-
-  /// 退出登录
-  Future<void> logout() async {
-    this._token = null;
-    this._user = null;
-    return;
   }
 }

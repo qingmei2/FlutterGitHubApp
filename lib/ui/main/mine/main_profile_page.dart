@@ -45,8 +45,8 @@ class _MainProfileFormState extends State<MainProfileForm>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    BlocProvider.of<MainProfileBloc>(context)
-        .dispatch(MainProfileInitialEvent(userRepository.user));
+//    BlocProvider.of<MainProfileBloc>(context)
+//        .dispatch(MainProfileInitialEvent(userRepository.user));
   }
 
   @override
