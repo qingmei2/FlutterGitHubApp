@@ -13,6 +13,10 @@ abstract class Errors {
     return LoginFailureException();
   }
 
+  static NoMoreDataException noMoreDataException() {
+    return NoMoreDataException();
+  }
+
   static EmptyInputException emptyInputException(final String message) {
     return EmptyInputException(message);
   }
@@ -35,6 +39,9 @@ class NetworkRequestException implements Exception {
 
 /// 空数据集错误
 class EmptyListException implements Exception {}
+
+/// 没有更多了
+class NoMoreDataException implements Exception {}
 
 /// 用户账号密码错误
 class LoginFailureException implements Exception {

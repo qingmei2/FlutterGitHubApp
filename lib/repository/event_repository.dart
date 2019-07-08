@@ -16,7 +16,7 @@ class UserEventRepository {
 
     var resultData;
     if (res != null && res.result) {
-      final List<Event> events = getEventList(res.data);
+      final List<Event> events = getEventList(res.data.data);
 
       resultData = DataResult.success(events);
 

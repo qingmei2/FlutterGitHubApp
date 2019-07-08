@@ -1,49 +1,54 @@
 import 'package:flutter_rhine/common/common.dart';
 import 'package:meta/meta.dart';
 
+@immutable
 class MainEventsState {
-
-}
-
-abstract class MainEventsStates {
   final bool isLoading;
   final int currentPage;
   final List<Event> events;
 
-  MainEventsStates({
-    @required this.currentPage,
-    this.events,
+  final Exception error;
+
+  MainEventsState({
     this.isLoading = false,
-  }) : assert(currentPage != null);
+    this.currentPage = 0,
+    this.events = const [],
+    this.error,
+  });
 
-  static MainEventsStates initial() => MainEventsEmptyState();
-}
+  MainEventsState copyWith({
+    final bool isLoading,
+    final int currentPage,
+    final List<Event> events,
+    final Exception error,
+  }) {
+    return MainEventsState(
+      isLoading: isLoading ?? this.isLoading,
+      currentPage: currentPage ?? this.currentPage,
+      events: events ?? this.events,
+      error: error ?? this.error,
+    );
+  }
 
-/// 加载中
-class MainEventsFirstLoading extends MainEventsStates {
-  MainEventsFirstLoading() : super(isLoading: true, currentPage: 0, events: []);
-}
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MainEventsState &&
+          runtimeType == other.runtimeType &&
+          isLoading == other.isLoading &&
+          currentPage == other.currentPage &&
+          events == other.events &&
+          error == other.error;
 
-/// 空列表状态
-class MainEventsEmptyState extends MainEventsStates {
-  MainEventsEmptyState() : super(currentPage: 0, isLoading: false);
-}
+  @override
+  int get hashCode =>
+      isLoading.hashCode ^
+      currentPage.hashCode ^
+      events.hashCode ^
+      error.hashCode;
 
-/// 加载分页数据成功
-class MainEventsPageLoadSuccess extends MainEventsStates {
-  MainEventsPageLoadSuccess({
-    @required List<Event> events,
-    @required int currentPage,
-  }) : super(currentPage: currentPage, events: events, isLoading: false);
-}
-
-/// 加载分页数据失败
-class MainEventPageLoadFailure extends MainEventsStates {
-  final String errorMessage;
-
-  MainEventPageLoadFailure({
-    @required int currentPage,
-    @required this.errorMessage,
-    List<Event> events,
-  }) : super(currentPage: currentPage, events: events, isLoading: false);
+  @override
+  String toString() {
+    return 'MainEventsState{isLoading: $isLoading, currentPage: $currentPage, events: $events, error: $error}';
+  }
 }

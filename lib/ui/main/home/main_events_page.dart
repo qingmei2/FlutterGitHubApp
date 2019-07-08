@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/model/event.dart';
@@ -13,7 +12,6 @@ import 'main_events.dart';
 
 class MainEventsPage extends StatelessWidget {
   final UserRepository userRepository;
-  final MainEventsBloc _mainEventsBloc = MainEventsBloc();
 
   MainEventsPage({@required this.userRepository})
       : assert(userRepository != null);
@@ -25,79 +23,57 @@ class MainEventsPage extends StatelessWidget {
         title: Text('Home'),
         automaticallyImplyLeading: false, // 隐藏返回键
       ),
-      body: BlocProvider(
-        builder: (_) => _mainEventsBloc,
-        child: MainEventForm(
-          userRepository: userRepository,
-        ),
-      ),
+      body: MainEventForm(),
     );
   }
 }
 
 class MainEventForm extends StatefulWidget {
-  final UserRepository userRepository;
-
-  MainEventForm({@required this.userRepository})
-      : assert(userRepository != null);
-
   @override
   State<StatefulWidget> createState() {
-    return _MainEventsFormState(userRepository);
+    return _MainEventsFormState();
   }
 }
 
 class _MainEventsFormState extends State<MainEventForm>
     with AutomaticKeepAliveClientMixin {
-  final UserRepository userRepository;
-
-  _MainEventsFormState(this.userRepository);
-
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-//    BlocProvider.of<MainEventsBloc>(context)
-//        .dispatch(MainEventsInitialEvent(username: userRepository.user.login));
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
+    final currentState = store.state;
+    store.dispatch(
+        MainEventsInitialAction(username: currentState.appUser.user.login));
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final bloc = BlocProvider.of<MainEventsBloc>(context);
-    return BlocListener<MainEventsEvent, MainEventsStates>(
-      bloc: bloc,
-      listener: (context, MainEventsStates state) {},
-      child: _eventList(),
-    );
-  }
-
-  /// 渲染列表
-  Widget _eventList() {
-    final bloc = BlocProvider.of<MainEventsBloc>(context);
-    return BlocBuilder(
-      bloc: bloc,
-      builder: (context, state) {
-        if (state is MainEventsFirstLoading) {
+    return StoreConnector<AppState, MainEventsState>(
+      converter: (store) => store.state.mainState.eventState,
+      builder: (context, MainEventsState state) {
+        if (state.isLoading) {
           return Center(
             child: ProgressBar(visibility: true),
           );
         }
 
-        if (state is MainEventsPageLoadSuccess) {
-          return _initExistDataList(state.events);
+        final Exception error = state.error;
+        if (error != null) {
+          if (error is EmptyListException) {
+            return Center(
+              child: Text('内容为空'),
+            );
+          } else if (error is NetworkRequestException) {
+            return Center(
+              child: Text('网络错误'),
+            );
+          }
         }
 
-        if (state is MainEventPageLoadFailure) {
-          return _initExistDataList(state.events);
-        }
-
-        if (state is MainEventsEmptyState) {
-          return Center(
-            child: Text('Empty Page.'),
-          );
-        }
+        return _initExistDataList(state.events);
       },
     );
   }
@@ -134,11 +110,17 @@ class _MainEventsFormState extends State<MainEventForm>
       ),
       autoLoad: true,
       loadMore: () async {
-//        BlocProvider.of<MainEventsBloc>(context).dispatch(
-//            MainEventLoadNextPageEvent(username: userRepository.user.login));
+        final Store<AppState> store = StoreProvider.of<AppState>(context);
+        final currentState = store.state;
+        store.dispatch(MainEventLoadNextPageAction(
+          username: currentState.appUser.user.login,
+          currentPage: currentState.mainState.eventState.currentPage,
+        ));
       },
     );
   }
+
+  Store<AppState> _getCurrentStore() => StoreProvider.of<AppState>(context);
 
   @override
   bool get wantKeepAlive => true;

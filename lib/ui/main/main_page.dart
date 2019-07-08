@@ -51,7 +51,12 @@ class _MainPageState extends State<MainPage>
     ]
   ];
 
-  final List<String> _bottomTabTitles = ['home', 'repos', 'issues', 'me'];
+  final List<String> _bottomTabTitles = [
+    'home',
+    'repos',
+    'issues',
+    'me',
+  ];
 
   @override
   void didChangeDependencies() {
