@@ -7,14 +7,23 @@ final appAuthReducer = combineReducers<AppUser>([
   TypedReducer<AppUser, AuthenticationClearAction>(_authenticationFailure),
 ]);
 
-AppUser _authenticationSuccess(AppUser user, AuthenticationSuccessAction action) {
+AppUser _authenticationSuccess(
+  AppUser user,
+  AuthenticationSuccessAction action,
+) {
   return AppUser(user: action.user, token: action.token);
 }
 
-AppUser _authenticationFailure(AppUser user, AuthenticationClearAction action) {
+AppUser _authenticationFailure(
+  AppUser user,
+  AuthenticationClearAction action,
+) {
   return AppUser(user: null, token: null);
 }
 
-AppUser _authenticationClear(AppUser user, AuthenticationCancelAction action) {
+AppUser _authenticationClear(
+  AppUser user,
+  AuthenticationCancelAction action,
+) {
   return AppUser(user: null, token: null);
 }

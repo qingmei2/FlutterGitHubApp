@@ -8,10 +8,10 @@ class AuthenticationSuccessAction extends AuthenticationAction {
   final User user;
   final String token;
 
-  AuthenticationSuccessAction(this.user, this.token)
-      : assert(user != null),
-        assert(token != null);
+  AuthenticationSuccessAction(this.user, this.token) : assert(user != null);
 }
+
+class AuthenticationFailureAction extends AuthenticationAction {}
 
 class AuthenticationCancelAction extends AuthenticationAction {}
 

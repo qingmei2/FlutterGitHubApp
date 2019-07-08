@@ -6,6 +6,10 @@ import 'package:flutter_rhine/ui/main/main.dart';
 abstract class AppAction {}
 
 AppState appReducer(AppState preState, dynamic action) {
+  if (Config.DEBUG) {
+    print('[ Pre  AppState: ]${preState.toString()}');
+    print('[ Next Action: ]${action.toString()}');
+  }
   return AppState(
     appUser: appAuthReducer(preState.appUser, action),
     loginState: loginReducer(preState.loginState, action),

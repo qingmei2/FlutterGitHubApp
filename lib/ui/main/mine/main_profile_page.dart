@@ -2,59 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
-import 'package:flutter_rhine/repository/repository.dart';
 
 import 'main_profile.dart';
 
 class MainProfilePage extends StatelessWidget {
-  final UserRepository userRepository;
-
-  MainProfilePage({@required this.userRepository})
-      : assert(userRepository != null);
+  MainProfilePage();
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, AppUser>(
-      converter: (Store<AppState> store) {
-        final AppUser appUser = store.state.appUser;
-        store.dispatch(MainProfileInitialAction(appUser.user));
-        return appUser;
-      },
-      builder: (context, appUser) => MainProfileForm(user: appUser.user),
-    );
+    return MainProfileForm();
   }
 }
 
 class MainProfileForm extends StatefulWidget {
-  final User user;
-
-  MainProfileForm({@required this.user});
+  MainProfileForm();
 
   @override
-  State<StatefulWidget> createState() => _MainProfileFormState(user: user);
+  State<StatefulWidget> createState() => _MainProfileFormState();
 }
 
 class _MainProfileFormState extends State<MainProfileForm>
     with AutomaticKeepAliveClientMixin {
-  final User user;
+  _MainProfileFormState();
 
-  _MainProfileFormState({this.user});
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final store = StoreProvider.of<AppState>(context);
+    final currentUser = store.state.appUser.user;
+    store.dispatch(MainProfileInitialAction(currentUser));
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: colorPrimary,
-      child: Stack(
-        alignment: Alignment.center,
-        textDirection: TextDirection.ltr,
-        fit: StackFit.loose,
-        children: <Widget>[
-          MainProfileUserInfoLayer(user),
-        ],
-      ),
+    return StoreConnector<AppState, User>(
+      converter: (Store<AppState> store) => store.state.appUser.user,
+      builder: (context, final User user) => Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: colorPrimary,
+            child: Stack(
+              alignment: Alignment.center,
+              textDirection: TextDirection.ltr,
+              fit: StackFit.loose,
+              children: <Widget>[
+                MainProfileUserInfoLayer(user),
+              ],
+            ),
+          ),
     );
   }
 

@@ -26,6 +26,7 @@ class MainPageState {
   factory MainPageState.initial() {
     return MainPageState(
       currentPageIndex: 0,
+      profileState: MainProfileState(),
     );
   }
 

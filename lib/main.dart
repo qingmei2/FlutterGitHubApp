@@ -66,13 +66,11 @@ class App extends StatelessWidget {
         toast('登录成功，跳转主页面');
         Navigator.pop(context);
         Navigator.pushNamed(context, AppRoutes.main);
-        appStore.dispatch(AuthenticationSuccessAction(user, token));
       },
       loginCancelCallback: (
         final BuildContext context,
       ) {
         toast('用户取消了登录');
-        appStore.dispatch(AuthenticationCancelAction());
       },
     );
   }

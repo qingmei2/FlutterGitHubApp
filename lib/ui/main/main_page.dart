@@ -87,7 +87,7 @@ class _MainPageState extends State<MainPage>
                   MainEventsPage(userRepository: userRepository),
                   MainReposPage(userRepository: userRepository),
                   MainIssuesPage(),
-                  MainProfilePage(userRepository: userRepository)
+                  MainProfilePage()
                 ],
                 controller: _pageController,
                 onPageChanged: _notifyViewPagerChanged,
