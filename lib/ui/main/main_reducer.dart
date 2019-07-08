@@ -5,6 +5,8 @@ import 'main.dart';
 final mainPageReducer = combineReducers<MainPageState>([
   TypedReducer<MainPageState, MainSwipeViewPagerAction>(
       _mainSwipeViewPagerReducer),
+  TypedReducer<MainPageState, MainProfileInitialAction>(
+      mainProfilePageInitialReducer),
 ]);
 
 MainPageState _mainSwipeViewPagerReducer(

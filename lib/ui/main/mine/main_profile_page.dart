@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/common/constants/assets.dart';
 import 'package:flutter_rhine/common/constants/colors.dart';
@@ -9,45 +8,37 @@ import 'main_profile.dart';
 
 class MainProfilePage extends StatelessWidget {
   final UserRepository userRepository;
-  final MainProfileBloc _profileBloc = MainProfileBloc();
 
   MainProfilePage({@required this.userRepository})
       : assert(userRepository != null);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      builder: (_) => _profileBloc,
-      child: MainProfileForm(
-        userRepository: userRepository,
-      ),
+    return StoreConnector<AppState, AppUser>(
+      converter: (Store<AppState> store) {
+        final AppUser appUser = store.state.appUser;
+        store.dispatch(MainProfileInitialAction(appUser.user));
+        return appUser;
+      },
+      builder: (context, appUser) => MainProfileForm(user: appUser.user),
     );
   }
 }
 
 class MainProfileForm extends StatefulWidget {
-  final UserRepository userRepository;
+  final User user;
 
-  MainProfileForm({@required this.userRepository})
-      : assert(userRepository != null);
+  MainProfileForm({@required this.user});
 
   @override
-  State<StatefulWidget> createState() =>
-      _MainProfileFormState(userRepository: userRepository);
+  State<StatefulWidget> createState() => _MainProfileFormState(user: user);
 }
 
 class _MainProfileFormState extends State<MainProfileForm>
     with AutomaticKeepAliveClientMixin {
-  final UserRepository userRepository;
+  final User user;
 
-  _MainProfileFormState({this.userRepository}) : assert(userRepository != null);
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-//    BlocProvider.of<MainProfileBloc>(context)
-//        .dispatch(MainProfileInitialEvent(userRepository.user));
-  }
+  _MainProfileFormState({this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -61,12 +52,7 @@ class _MainProfileFormState extends State<MainProfileForm>
         textDirection: TextDirection.ltr,
         fit: StackFit.loose,
         children: <Widget>[
-          BlocBuilder(
-            bloc: BlocProvider.of<MainProfileBloc>(context),
-            builder: (context, MainProfileStates state) {
-              return MainProfileUserInfoLayer(state.user);
-            },
-          ),
+          MainProfileUserInfoLayer(user),
         ],
       ),
     );

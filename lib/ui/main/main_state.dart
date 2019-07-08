@@ -24,7 +24,9 @@ class MainPageState {
   });
 
   factory MainPageState.initial() {
-    return MainPageState(currentPageIndex: 0);
+    return MainPageState(
+      currentPageIndex: 0,
+    );
   }
 
   MainPageState copyWith({

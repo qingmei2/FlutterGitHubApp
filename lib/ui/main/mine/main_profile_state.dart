@@ -1,19 +1,33 @@
 import 'package:flutter_rhine/common/common.dart';
 
-class MainProfileState {}
-
-abstract class MainProfileStates {
+@immutable
+class MainProfileState {
   final User user;
 
-  MainProfileStates(this.user);
-}
+  MainProfileState({
+    this.user,
+  });
 
-class MainProfileIdleState extends MainProfileStates {
-  MainProfileIdleState() : super(null);
-}
+  @override
+  String toString() {
+    return 'MainProfileState{user: $user}';
+  }
 
-class MainProfileInitSuccessState extends MainProfileStates {
-  MainProfileInitSuccessState(User user)
-      : assert(user != null),
-        super(user);
+  MainProfileState copyWith({
+    final User user,
+  }) {
+    return MainProfileState(
+      user: user ?? this.user,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MainProfileState &&
+          runtimeType == other.runtimeType &&
+          user == other.user;
+
+  @override
+  int get hashCode => user.hashCode;
 }
