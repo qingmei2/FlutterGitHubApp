@@ -4,7 +4,7 @@ import 'login.dart';
 
 final loginReducer = combineReducers<LoginState>([
   TypedReducer<LoginState, LoginClickedAction>(_clickLogin),
-  TypedReducer<LoginState, AutoLoginAction>(_autoLogin),
+  TypedReducer<LoginState, AutoLoginInfoGetAction>(_autoLogin),
   TypedReducer<LoginState, LoginLoadingAction>(_loginLoading),
   TypedReducer<LoginState, LoginSuccessAction>(_loginSuccess),
   TypedReducer<LoginState, LoginFailureAction>(_loginFailure),
@@ -22,7 +22,7 @@ LoginState _clickLogin(LoginState state, LoginClickedAction action) {
   );
 }
 
-LoginState _autoLogin(LoginState state, AutoLoginAction action) {
+LoginState _autoLogin(LoginState state, AutoLoginInfoGetAction action) {
   return state.copyWith(
     username: action.username,
     password: action.password,

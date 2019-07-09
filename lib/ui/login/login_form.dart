@@ -26,6 +26,13 @@ class _LoginFormState extends State<LoginForm> {
   _LoginFormState(this.loginSuccessCallback, this.loginCancelCallback);
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    StoreProvider.of<AppState>(context)
+        .dispatch(InitialAction(shouldAutoLogin: true));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, LoginState>(
       converter: (store) {

@@ -20,12 +20,12 @@ class LoginClickedAction extends LoginAction {
   LoginClickedAction({this.username, this.password});
 }
 
-/// 用户自动登录事件
-class AutoLoginAction extends LoginAction {
+/// 用户自动登录信息获取事件
+class AutoLoginInfoGetAction extends LoginAction {
   final String username;
   final String password;
 
-  AutoLoginAction({this.username, this.password});
+  AutoLoginInfoGetAction({this.username, this.password});
 }
 
 /// 登录中
