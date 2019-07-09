@@ -1,33 +1,20 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter_rhine/common/common.dart';
 
 import 'main_issues.dart';
 
-class MainIssuesBloc extends Bloc<MainIssuesEvent, MainIssuesStates> {
+class MainIssuesEpic implements EpicClass<AppState> {
   @override
-  MainIssuesStates get initialState => MainIssuesEmptyState();
-
-  @override
-  Stream<MainIssuesStates> mapEventToState(MainIssuesEvent event) async* {
-    final MainIssuesStates nowState = currentState;
-    if (event is MainIssuesInitialEvent) {
-      yield MainIssuesFirstLoading();
-      yield* _pagingRequestStream(
-        newPageIndex: 1,
-        previousList: [],
-      );
-    }
-
-    if (event is MainIssuesLoadNextPageEvent) {
-      final int newPage = nowState.currentPage + 1;
-      final List<Issue> oldList = nowState.issues;
-      yield* _pagingRequestStream(
-        newPageIndex: newPage,
-        previousList: oldList,
-        sort: nowState.listSort,
-        state: nowState.listState,
-      );
-    }
+  Stream call(Stream actions, EpicStore<AppState> store) {
+    return Observable.merge([
+      Observable(actions).ofType(TypeToken<MainIssuesInitialAction>()).flatMap(
+          (action) => _pagingRequestStream(newPageIndex: 1, previousList: [])),
+      Observable(actions)
+          .ofType(TypeToken<MainIssuesLoadNextPageAction>())
+          .flatMap((action) => _pagingRequestStream(
+                newPageIndex: action.currentPage + 1,
+                previousList: action.previousList,
+              )),
+    ]);
   }
 
   /// 分页网络请求
@@ -35,7 +22,7 @@ class MainIssuesBloc extends Bloc<MainIssuesEvent, MainIssuesStates> {
   /// [sort] 排序规则,[IssuesRepository.SORT_CREATED]、[IssuesRepository.SORT_UPDATED]、[IssuesRepository.SORT_COMMENTS]
   /// [state] issue状态,[IssuesRepository.STATE_OPEN]、[IssuesRepository.STATE_CLOSED]、[IssuesRepository.STATE_ALL]
   /// [previousList] 之前的列表数据
-  Stream<MainIssuesStates> _pagingRequestStream({
+  Stream<MainIssuesAction> _pagingRequestStream({
     final int newPageIndex,
     final List<Issue> previousList,
     final String sort = IssuesRepository.SORT_UPDATED,
@@ -58,25 +45,18 @@ class MainIssuesBloc extends Bloc<MainIssuesEvent, MainIssuesStates> {
         );
       } else {
         if (newPageIndex == 1) {
-          yield MainIssuesEmptyState();
+          yield MainIssuesEmptyAction();
         } else {
-          yield MainIssuesPageLoadFailure(
-            currentPage: newPageIndex,
-            issues: previousList,
-            errorMessage: '没有更多了',
-          );
+          yield MainIssuesPageLoadFailure(Errors.noMoreDataException());
         }
       }
     } else {
       if (newPageIndex == 1) {
         yield MainIssuesPageLoadFailure(
-            currentPage: 1, errorMessage: '初始化网络请求失败');
+            Errors.networkException(message: '网络请求失败'));
       } else {
         yield MainIssuesPageLoadFailure(
-          currentPage: newPageIndex,
-          issues: previousList,
-          errorMessage: '请求更多数据失败',
-        );
+            Errors.networkException(message: '请求更多数据失败'));
       }
     }
   }

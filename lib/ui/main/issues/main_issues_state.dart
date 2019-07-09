@@ -1,51 +1,65 @@
 import 'package:flutter_rhine/common/common.dart';
-import 'package:meta/meta.dart';
 
+@immutable
 class MainIssuesState {
-
-}
-
-abstract class MainIssuesStates {
   final bool isLoading;
   final int currentPage;
   final List<Issue> issues;
   final String listSort;
   final String listState;
 
-  MainIssuesStates({
-    @required this.currentPage,
-    this.issues,
+  final Exception error;
+
+  MainIssuesState({
+    this.currentPage = 0,
+    this.issues = const [],
     this.isLoading = false,
     this.listSort = IssuesRepository.SORT_UPDATED,
     this.listState = IssuesRepository.STATE_OPEN,
+    this.error,
   }) : assert(currentPage != null);
-}
 
-/// 加载中
-class MainIssuesFirstLoading extends MainIssuesStates {
-  MainIssuesFirstLoading() : super(isLoading: true, currentPage: 0, issues: []);
-}
+  MainIssuesState copyWith({
+    final bool isLoading,
+    final int currentPage,
+    final List<Issue> issues,
+    final String listSort,
+    final String listState,
+    final Exception error,
+  }) {
+    return MainIssuesState(
+      isLoading: isLoading ?? this.isLoading,
+      currentPage: currentPage ?? this.currentPage,
+      issues: issues ?? this.issues,
+      listSort: listSort ?? this.listSort,
+      listState: listState ?? this.listState,
+      error: error ?? this.error,
+    );
+  }
 
-/// 空列表状态
-class MainIssuesEmptyState extends MainIssuesStates {
-  MainIssuesEmptyState() : super(currentPage: 0, isLoading: false);
-}
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MainIssuesState &&
+          runtimeType == other.runtimeType &&
+          isLoading == other.isLoading &&
+          currentPage == other.currentPage &&
+          issues == other.issues &&
+          listSort == other.listSort &&
+          listState == other.listState &&
+          error == other.error;
 
-/// 加载分页数据成功
-class MainIssuesPageLoadSuccess extends MainIssuesStates {
-  MainIssuesPageLoadSuccess({
-    @required List<Issue> issues,
-    @required int currentPage,
-  }) : super(currentPage: currentPage, issues: issues, isLoading: false);
-}
+  @override
+  int get hashCode =>
+      isLoading.hashCode ^
+      currentPage.hashCode ^
+      issues.hashCode ^
+      listSort.hashCode ^
+      listState.hashCode ^
+      error.hashCode;
 
-/// 加载分页数据失败
-class MainIssuesPageLoadFailure extends MainIssuesStates {
-  final String errorMessage;
-
-  MainIssuesPageLoadFailure({
-    @required int currentPage,
-    @required this.errorMessage,
-    List<Issue> issues,
-  }) : super(currentPage: currentPage, issues: issues, isLoading: false);
+  @override
+  String toString() {
+    return 'MainIssuesState{isLoading: $isLoading, currentPage: $currentPage, issues: $issues, listSort: $listSort, listState: $listState, error: $error}';
+  }
 }

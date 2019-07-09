@@ -16,10 +16,12 @@ class MainEventsInitialAction extends MainEventsAction {
 class MainEventLoadNextPageAction extends MainEventsAction {
   final String username;
   final int currentPage;
+  final List<Event> previousList;
 
   MainEventLoadNextPageAction({
     @required this.username,
     @required this.currentPage,
+    this.previousList = const [],
   })  : assert(username != null),
         assert(currentPage != null);
 }

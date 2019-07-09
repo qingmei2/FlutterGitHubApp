@@ -11,8 +11,11 @@ class MainEventsEpic implements EpicClass<AppState> {
           .flatMap((event) => _pagingRequestStream(1, [], event.username)),
       Observable(actions)
           .ofType(TypeToken<MainEventLoadNextPageAction>())
-          .flatMap((event) =>
-              _pagingRequestStream(event.currentPage + 1, [], event.username)),
+          .flatMap((event) => _pagingRequestStream(
+                event.currentPage + 1,
+                event.previousList,
+                event.username,
+              )),
     ]);
   }
 

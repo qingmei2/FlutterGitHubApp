@@ -8,6 +8,7 @@ import 'package:flutter_rhine/ui/main/main_page.dart';
 import 'app/app_reducer.dart';
 import 'ui/login/login.dart';
 import 'ui/main/home/main_events.dart';
+import 'ui/main/issues/main_issues_middleware.dart';
 
 void main() {
   debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -28,6 +29,7 @@ class App extends StatelessWidget {
       middleware: [
         EpicMiddleware<AppState>(LoginEpic(userRepository)),
         EpicMiddleware<AppState>(MainEventsEpic()),
+        EpicMiddleware<AppState>(MainIssuesEpic()),
       ],
     );
 

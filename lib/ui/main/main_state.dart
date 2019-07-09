@@ -27,6 +27,7 @@ class MainPageState {
     return MainPageState(
       currentPageIndex: 0,
       eventState: MainEventsState(),
+      issueState: MainIssuesState(),
       profileState: MainProfileState(),
     );
   }

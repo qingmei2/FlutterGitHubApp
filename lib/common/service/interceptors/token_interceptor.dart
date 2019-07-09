@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_rhine/common/constants/config.dart';
+import 'package:flutter_rhine/repository/others/dao_result.dart';
 import 'package:flutter_rhine/repository/others/sputils.dart';
 
 class TokenInterceptor extends InterceptorsWrapper {
@@ -20,7 +21,9 @@ class TokenInterceptor extends InterceptorsWrapper {
   @override
   onResponse(Response response) async {
     try {
-      var responseJson = response.data;
+      final DataResult res = response.data;
+      final dynamic responseJson = res.data;
+
       if (response.statusCode == 201 && responseJson['token'] != null) {
         _token = 'token' + responseJson['token'];
         await SpUtils.save(Config.TOKEN_KEY, _token);

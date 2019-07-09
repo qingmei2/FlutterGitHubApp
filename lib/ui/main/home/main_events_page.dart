@@ -115,12 +115,11 @@ class _MainEventsFormState extends State<MainEventForm>
         store.dispatch(MainEventLoadNextPageAction(
           username: currentState.appUser.user.login,
           currentPage: currentState.mainState.eventState.currentPage,
+          previousList: currentState.mainState.eventState.events,
         ));
       },
     );
   }
-
-  Store<AppState> _getCurrentStore() => StoreProvider.of<AppState>(context);
 
   @override
   bool get wantKeepAlive => true;

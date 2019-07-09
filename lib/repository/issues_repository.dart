@@ -30,12 +30,12 @@ class IssuesRepository {
 
     final String url = Api.userIssues +
         Api.getPageParams('?', page, perPage) +
-        '&sort=$sort&common.state=$state';
+        '&sort=$sort&state=$state';
 
     DataResult res = await serviceManager.netFetch(url, null, null, null);
     if (res != null && res.result) {
       List<Issue> list = new List();
-      var data = res.data;
+      var data = res.data.data;
       if (data == null || data.length == 0) {
         return DataResult.failure(Errors.emptyListException());
       }
