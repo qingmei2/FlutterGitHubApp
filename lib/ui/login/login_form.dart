@@ -25,11 +25,16 @@ class _LoginFormState extends State<LoginForm> {
 
   _LoginFormState(this.loginSuccessCallback, this.loginCancelCallback);
 
+  bool _isFirstLoad = true;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    StoreProvider.of<AppState>(context)
-        .dispatch(InitialAction(shouldAutoLogin: true));
+    if (_isFirstLoad) {
+      _isFirstLoad = false;
+      StoreProvider.of<AppState>(context)
+          .dispatch(InitialAction(shouldAutoLogin: true));
+    }
   }
 
   @override
