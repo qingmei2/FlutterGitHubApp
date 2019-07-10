@@ -33,7 +33,7 @@ class _LoginFormState extends State<LoginForm> {
       listener: (context, LoginState state) {
         print('接收到new State: ${state.toString()}');
         if (state is LoginFailure) {
-          Fluttertoast.showToast(msg: state.errorMessage);
+          _onLoginFailure(state.errorMessage);
         }
         if (state is LoginSuccess) {
           _onLoginSuccess(context);
@@ -72,6 +72,11 @@ class _LoginFormState extends State<LoginForm> {
         ),
       ),
     );
+  }
+
+  void _onLoginFailure(final String message) {
+    print('Login Failure, message: $message');
+    Fluttertoast.showToast(msg: message);
   }
 
   /// 登录结果处理

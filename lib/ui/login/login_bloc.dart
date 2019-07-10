@@ -50,7 +50,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final DataResult<User> loginResult =
         await userRepository.login(username, password);
 
-    if (loginResult.result) {
+    if (loginResult?.result ?? false) {
       yield _loginSuccessState(username, password);
     } else {
       yield _loginFailureState(username, password);
