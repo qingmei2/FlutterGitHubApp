@@ -25,6 +25,11 @@ class MainEventsEpic implements EpicClass<AppState> {
   /// [username]     用户名
   Stream _pagingRequestStream(
       int newPageIndex, List<Event> previousList, String username) async* {
+    final isFirstPage = newPageIndex == 1;
+    if (isFirstPage) {
+      yield MainEventsFirstLoadingAction();
+    }
+
     final DataResult<List<Event>> result =
         await UserEventRepository.fetchEvents(username, newPageIndex);
 
@@ -35,14 +40,14 @@ class MainEventsEpic implements EpicClass<AppState> {
 
         yield MainEventsPageLoadSuccessAction(previousList, newPageIndex);
       } else {
-        if (newPageIndex == 1) {
+        if (isFirstPage) {
           yield MainEventPageLoadFailureAction(Errors.emptyListException());
         } else {
           yield MainEventPageLoadFailureAction(Errors.noMoreDataException());
         }
       }
     } else {
-      if (newPageIndex == 1) {
+      if (isFirstPage) {
         yield MainEventPageLoadFailureAction(Exception('初始化网络请求失败'));
       } else {
         yield MainEventPageLoadFailureAction(Exception('请求更多数据失败'));

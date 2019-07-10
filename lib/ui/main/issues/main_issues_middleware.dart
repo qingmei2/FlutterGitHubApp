@@ -28,6 +28,11 @@ class MainIssuesEpic implements EpicClass<AppState> {
     final String sort = IssuesRepository.SORT_UPDATED,
     final String state = IssuesRepository.STATE_OPEN,
   }) async* {
+    final isFirstPage = newPageIndex == 1;
+    if (isFirstPage) {
+      yield MainIssuesFirstLoadingAction();
+    }
+
     final DataResult<List<Issue>> result = await IssuesRepository.fetchIssues(
       sort: sort,
       state: state,
@@ -44,14 +49,14 @@ class MainIssuesEpic implements EpicClass<AppState> {
           currentPage: newPageIndex,
         );
       } else {
-        if (newPageIndex == 1) {
+        if (isFirstPage) {
           yield MainIssuesEmptyAction();
         } else {
           yield MainIssuesPageLoadFailure(Errors.noMoreDataException());
         }
       }
     } else {
-      if (newPageIndex == 1) {
+      if (isFirstPage) {
         yield MainIssuesPageLoadFailure(
             Errors.networkException(message: '网络请求失败'));
       } else {
