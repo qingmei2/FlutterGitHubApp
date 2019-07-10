@@ -6,8 +6,9 @@
 
 * [basic_provider   ](https://github.com/qingmei2/FlutterGitHubApp/tree/basic_provider): `Google`官方推荐的 [provider](https://github.com/rrousselGit/provider) 库；
 * [basic_bloc_rxdart](https://github.com/qingmei2/FlutterGitHubApp/tree/basic_bloc_rxdart): 经典的 [bloc](https://github.com/felangel/bloc) 模式的实现案例，适用于复杂的业务场景开发；
+* [basic_redux](https://github.com/qingmei2/FlutterGitHubApp/tree/basic_redux): `Redux`模式的实现案例，适用于复杂的业务场景开发；
 
-* **master(默认分支)**： 该分支始终展示的是最新稳定版本的状态管理实践，目前展示的是 **bloc_rxdart** 模式的开发示例。
+* **master(默认分支)**： 该分支始终展示的是最新~~稳定版本~~的状态管理实践，目前展示的是 **redux** 模式的开发示例。
 
 ## 通知
 
