@@ -7,7 +7,9 @@ final mainPageReducer = combineReducers<MainPageState>([
   TypedReducer<MainPageState, MainSwipeViewPagerAction>(
       _mainSwipeViewPagerReducer),
   TypedReducer<MainPageState, MainEventsAction>(_mainEventsReducer),
+  TypedReducer<MainPageState, MainReposAction>(_mainRepoReducer),
   TypedReducer<MainPageState, MainProfileAction>(_mainProfileReducer),
+  TypedReducer<MainPageState, MainIssuesAction>(_mainIssuesReducer),
 ]);
 
 MainPageState _mainSwipeViewPagerReducer(
@@ -35,4 +37,22 @@ MainPageState _mainEventsReducer(
   final preProfileState = preState.eventState;
   final newProfileState = mainEventsReducer(preProfileState, action);
   return preState.copyWith(eventState: newProfileState);
+}
+
+MainPageState _mainIssuesReducer(
+  MainPageState preState,
+  MainIssuesAction action,
+) {
+  final before = preState.issueState;
+  final next = mainIssuesReducer(before, action);
+  return preState.copyWith(issueState: next);
+}
+
+MainPageState _mainRepoReducer(
+  MainPageState preState,
+  MainReposAction action,
+) {
+  final before = preState.repoState;
+  final next = mainRepoReducer(before, action);
+  return preState.copyWith(repoState: next);
 }

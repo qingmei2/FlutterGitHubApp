@@ -4,6 +4,7 @@ import 'package:flutter_rhine/common/common.dart';
 import 'package:flutter_rhine/ui/login/login_middleware.dart';
 import 'package:flutter_rhine/ui/login/login_page.dart';
 import 'package:flutter_rhine/ui/main/main_page.dart';
+import 'package:flutter_rhine/ui/main/repos/main_repo.dart';
 
 import 'app/app_reducer.dart';
 import 'ui/login/login.dart';
@@ -29,6 +30,7 @@ class App extends StatelessWidget {
       middleware: [
         EpicMiddleware<AppState>(LoginEpic(userRepository)),
         EpicMiddleware<AppState>(MainEventsEpic()),
+        EpicMiddleware<AppState>(MainRepoEpic()),
         EpicMiddleware<AppState>(MainIssuesEpic()),
       ],
     );

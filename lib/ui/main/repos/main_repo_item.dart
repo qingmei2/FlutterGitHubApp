@@ -34,7 +34,7 @@ class MainRepoPagedItem extends StatelessWidget {
         ),
       ),
       onTap: () {
-        observer(MainRepoAction(repo.url));
+        observer(MainRepoItemsAction(repo.url));
       },
     );
   }
@@ -235,10 +235,10 @@ class MainRepoPagedItem extends StatelessWidget {
   }
 }
 
-class MainRepoAction {
+class MainRepoItemsAction {
   final String repoUrl;
 
-  MainRepoAction(this.repoUrl);
+  MainRepoItemsAction(this.repoUrl);
 }
 
-typedef MainRepoActionObserver(MainRepoAction nextAction);
+typedef MainRepoActionObserver(MainRepoItemsAction nextAction);

@@ -90,7 +90,7 @@ class _MainPageState extends State<MainPage>
               body: PageView(
                 children: <Widget>[
                   MainEventsPage(userRepository: userRepository),
-                  MainReposPage(userRepository: userRepository),
+                  MainReposPage(),
                   MainIssuesPage(),
                   MainProfilePage()
                 ],
