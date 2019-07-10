@@ -16,7 +16,7 @@ class UserRepoRepository {
     final String sort = SORT_UPDATED,
     final int pageIndex,
   }) async {
-    DataResult res = await serviceManager.netFetch(
+    var res = await serviceManager.netFetch(
         Api.userRepos(username) +
             Api.getPageParams('?', pageIndex) +
             '&sort=$sort',
@@ -26,7 +26,7 @@ class UserRepoRepository {
 
     DataResult<List<Repo>> resultData;
     if (res != null && res.result) {
-      final List<Repo> repos = getRepoList(res.data);
+      final List<Repo> repos = getRepoList(res.data.data);
 
       if (repos.length > 0) {
         resultData = DataResult.success(repos);

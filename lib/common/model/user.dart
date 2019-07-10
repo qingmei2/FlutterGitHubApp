@@ -121,7 +121,6 @@ class User extends Object {
   factory User.fromJson(Map<String, dynamic> srcJson) => _$UserFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
-
 }
 
 
